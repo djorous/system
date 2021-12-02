@@ -67,12 +67,14 @@ umount /mnt
 
 #Remount / subvolume
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/sda3 /mnt
+btrfs quota enable /mnt
 
 #Create mount point directories
 mkdir /mnt/{boot,home}
 
 #Mount /home subvolume
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/sda4 /mnt/home
+btrfs quota enable /mnt/home
 
 #Mount boot partition
 mount /dev/sda1 /mnt/boot
@@ -268,7 +270,7 @@ EOF
 # Cleanup
 #------------------------------------------------------------------------------
 #Remove unwanted icons
-cd /usr/share/applications
+cd /mnt/usr/share/applications
 rm avahi-discover.desktop bssh.desktop bvnc.desktop cmake-gui.desktop lstopo.desktop qv4l2.desktop qvidcap.desktop
 
 #Delete install folders
