@@ -228,7 +228,7 @@ echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 #Install Software
 pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks evolution
 #Remove unwanted default packages
-pacman -Rns --noconfirm cheese epiphany gnome-books gnome-boxes gnome-calendar gnome-characters gnome-contacts gnome-font-viewer gnome-music simple-scan
+pacman -Rns --noconfirm cheese epiphany gnome-books gnome-boxes gnome-calendar gnome-characters gnome-contacts gnome-font-viewer gnome-music gnome-software simple-scan
 
 #------------------------------------------------------------------------------
 # Enable Services
