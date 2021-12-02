@@ -25,4 +25,5 @@ t
 swap
 p
 w
+q
 EOF
