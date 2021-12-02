@@ -1,0 +1,6 @@
+#!/bin/sh
+# We need to ensure all nvidia modules were unloaded before shutdown
+/usr/bin/modprobe -r nvidia_drm 
+/usr/bin/modprobe -r nvidia_modeset 
+/usr/bin/modprobe -r nvidia_uvm 
+/usr/bin/modprobe -r nvidia
