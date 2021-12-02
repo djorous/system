@@ -24,6 +24,4 @@ t
 2
 swap
 p
-w
-q
 EOF
