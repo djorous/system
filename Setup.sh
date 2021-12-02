@@ -185,6 +185,7 @@ echo "vm.swappiness=1" >> /etc/sysctl.d/10-swappiness.conf
 # Set Journal size limit
 #------------------------------------------------------------------------------
 #Create new file with Journal size limit
+mkdir /etc/systemd/journald.conf.d
 echo "[Journal]" >> /etc/systemd/journald.conf.d/00-journal-size.conf
 echo "SystemMaxUse=50M" >> /etc/systemd/journald.conf.d/00-journal-size.conf
 
@@ -223,15 +224,9 @@ echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 # Setup DE
 #------------------------------------------------------------------------------
 #Install Software
-pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks
+pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks evolution
 #Remove unwanted default packages
 pacman -Rns --noconfirm cheese epiphany gnome-books gnome-boxes gnome-calendar gnome-characters gnome-contacts gnome-font-viewer gnome-music simple-scan
-
-#------------------------------------------------------------------------------
-#Syncronize Locate
-#------------------------------------------------------------------------------
-#Syncronize db
-updatedb
 
 #------------------------------------------------------------------------------
 # Enable Services
@@ -279,3 +274,17 @@ rm avahi-discover.desktop bssh.desktop bvnc.desktop cmake-gui.desktop lstopo.des
 #Delete install folders
 rm -rf /mnt/root/Arch_Automation
 rm -rf /mnt/home/djorous/paru-bin
+
+#------------------------------------------------------------------------------
+#Syncronize Locate
+#------------------------------------------------------------------------------
+#Syncronize db
+arch-chroot /mnt /bin/bash <<EOF
+updatedb
+EOF
+
+#------------------------------------------------------------------------------
+#Reboot
+#------------------------------------------------------------------------------
+#Restart System
+systemctl reboot
