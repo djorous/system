@@ -2,16 +2,33 @@
 #------------------------------------------------------------------------------
 # Disk Partitioning
 #------------------------------------------------------------------------------
-#Clean Disk Partition
-#sgdisk --zap-all /dev/nvme0n1
-#Create Boot Partition
-#echo "n\n1\n\n+512M\nef00\nw\ny\n" | gdisk /dev/nvme0n1
-#Create Create Swap Partition
-#echo "n\n2\n\n+4G\n8200\nw\ny\n" | gdisk /dev/nvme0n1
-#Create Create / Partition
-#echo "n\n3\n\n+20G\n8e00\nw\ny\n" | gdisk /dev/nvme0n1
-#Create Create /home Partition
-#echo "n\n4\n\n\n8e00\nw\ny\n" | gdisk /dev/nvme0n1
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sda
+  g # clear the in memory partition table
+  n # new partition
+  1 # partition number 1
+    # default - start at beginning of disk 
+  +512M # 100 MB boot parttion
+  n # new partition
+  2 # partion number 2
+    # default, start immediately after preceding partition
+  +4G # swap partition
+  n # new partition
+  3 # partion number 3
+    # default, start immediately after preceding partition
+  +45G # swap partition
+  n # new partition
+  4 # partion number 4
+    # default, start immediately after preceding partition
+    # default, end at the end
+  t # new partition
+  1 # partion number 1
+  uefi  # default, start immediately after preceding partition
+  t # new partition
+  2 # partion number 2
+  swap  # default, start immediately after preceding partition  
+  p # print the in-memory partition table
+  w # write
+EOF
 
 #------------------------------------------------------------------------------
 # Format Disks
@@ -206,7 +223,7 @@ echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 # Setup DE
 #------------------------------------------------------------------------------
 #Install Software
-pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks #gnome-software-packagekit-plugin 
+pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks
 #Remove unwanted default packages
 pacman -Rns --noconfirm cheese epiphany gnome-books gnome-boxes gnome-calendar gnome-characters gnome-contacts gnome-font-viewer gnome-music simple-scan
 #remove unwanted icons
