@@ -206,7 +206,7 @@ echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 # Setup DE
 #------------------------------------------------------------------------------
 #Install Software
-pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks gnome-software-packagekit-plugin 
+pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks #gnome-software-packagekit-plugin 
 #Remove unwanted default packages
 pacman -Rns --noconfirm cheese epiphany gnome-books gnome-boxes gnome-calendar gnome-characters gnome-contacts gnome-font-viewer gnome-music simple-scan
 #remove unwanted icons
