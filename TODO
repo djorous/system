@@ -3,5 +3,5 @@
 
 #qemu libvirt virt-manager iptables-nft dnsmasq bridge-utils edk2-ovmf dmidecode
 #systemctl enable libvirtd  
-
+#gnome-software-packagekit-plugin
 
