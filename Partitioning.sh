@@ -8,6 +8,14 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sda
   n # new partition
   2 # partion number 2
     # default, start immediately after preceding partition
-    # default, extend partition to end of disk
+  +4G # swap partition
+  n # new partition
+  3 # partion number 3
+    # default, start immediately after preceding partition
+  +45G # swap partition
+  n # new partition
+  4 # partion number 4
+    # default, start immediately after preceding partition
+    # default, end at the end
   p # print the in-memory partition table
 EOF
