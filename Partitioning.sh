@@ -1,5 +1,5 @@
 #!/bin/bash
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' | fdisk /dev/sda
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' | fdisk << EOF | fdisk /dev/sda
 g
 n
 1
@@ -26,3 +26,4 @@ swap
 p
 w
 q
+EOF
