@@ -226,9 +226,6 @@ echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks
 #Remove unwanted default packages
 pacman -Rns --noconfirm cheese epiphany gnome-books gnome-boxes gnome-calendar gnome-characters gnome-contacts gnome-font-viewer gnome-music simple-scan
-#remove unwanted icons
-cd /usr/share/applications
-rm avahi-discover.desktop bssh.desktop bvnc.desktop cmake-gui.desktop lstopo.desktop qv4l2.desktop qvidcap.desktop
 
 #------------------------------------------------------------------------------
 #Syncronize Locate
@@ -271,3 +268,14 @@ makepkg --syncdeps --install --needed --noconfirm
 paru -S --noconfirm google-chrome chrome-gnome-shell timeshift timeshift-autosnap
 #Close
 EOF
+
+#------------------------------------------------------------------------------
+# Cleanup
+#------------------------------------------------------------------------------
+#Remove unwanted icons
+cd /usr/share/applications
+rm avahi-discover.desktop bssh.desktop bvnc.desktop cmake-gui.desktop lstopo.desktop qv4l2.desktop qvidcap.desktop
+
+#Delete install folders
+rm -rf /mnt/root/Arch_Automation
+rm -rf /mnt/home/djorous/paru-bin
