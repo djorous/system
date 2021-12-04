@@ -229,9 +229,7 @@ echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 # Setup DE
 #------------------------------------------------------------------------------
 #Install Software
-pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks evolution
-#Remove unwanted default packages
-pacman -Rns --noconfirm cheese epiphany gnome-books gnome-boxes gnome-calendar gnome-characters gnome-contacts gnome-font-viewer gnome-music gnome-software simple-scan
+pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks gnome-software-packagekit-plugin evolution
 #Disable Wayland
 sed -i '5s/.//' /etc/gdm/custom.conf
 
