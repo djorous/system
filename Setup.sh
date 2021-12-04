@@ -1,5 +1,11 @@
 #!/bin/bash
 #------------------------------------------------------------------------------
+# Clear disk
+#------------------------------------------------------------------------------
+#zap disk
+sgdisk --zap-all /dev/nvme0n1
+
+#------------------------------------------------------------------------------
 # Disk Partitioning
 #------------------------------------------------------------------------------
 sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/nvme0n1
@@ -11,11 +17,11 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/nvme0n1
   n # new partition
   2 # partion number 2
     # default, start immediately after preceding partition
-  +4G # swap partition
+  +16G # swap partition
   n # new partition
   3 # partion number 3
     # default, start immediately after preceding partition
-  +45G # swap partition
+  +250G # / partition
   n # new partition
   4 # partion number 4
     # default, start immediately after preceding partition
