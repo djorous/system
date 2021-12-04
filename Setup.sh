@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------
 # Disk Partitioning
 #------------------------------------------------------------------------------
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sda
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/nvme0n1
   g # clear the in memory partition table
   n # new partition
   1 # partition number 1
@@ -33,51 +33,48 @@ EOF
 #------------------------------------------------------------------------------
 # Format Disks
 #------------------------------------------------------------------------------
-#Create a vfat partition in /dev/sda1
-mkfs.vfat /dev/sda1
-#Create a swap partition in /dev/sda1
-mkswap /dev/sda2
-#Create a btrfs partition in /dev/sda1
-mkfs.btrfs -f /dev/sda3
-#Create a btrfs partition in /dev/sda1
-mkfs.btrfs -f /dev/sda4
-
-#------------------------------------------------------------------------------
-# Create Swap
-#------------------------------------------------------------------------------
-#Mount swap partition
-swapon /dev/sda2
+#Create a vfat partition in /dev/nvme0n1p1
+mkfs.vfat /dev/nvme0n1p1
+#Create a swap partition in /dev/nvme0n1p2
+mkswap /dev/nvme0n1p2
+#Create a btrfs partition in /dev/nvme0n1p3
+mkfs.btrfs -f /dev/nvme0n1p3
+#Create a btrfs partition in /dev/nvme0n1p4
+mkfs.btrfs -f /dev/nvme0n1p4
 
 #------------------------------------------------------------------------------
 # Mount / and create subvolumes
 #------------------------------------------------------------------------------
 #Create subvolume for /
-mount /dev/sda3 /mnt
+mount /dev/nvme0n1p3 /mnt
 cd /mnt
 btrfs subvolume create @
 cd /root
 umount /mnt
 
 #Create subvolume for /home
-mount /dev/sda4 /mnt
+mount /dev/nvme0n1p4 /mnt
 cd /mnt
 btrfs subvolume create @home
 cd /root
 umount /mnt
 
 #Remount / subvolume
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/sda3 /mnt
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/nvme0n1p3 /mnt
 btrfs quota enable /mnt
 
 #Create mount point directories
 mkdir /mnt/{boot,home}
 
 #Mount /home subvolume
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/sda4 /mnt/home
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/nvme0n1p4 /mnt/home
 btrfs quota enable /mnt/home
 
 #Mount boot partition
-mount /dev/sda1 /mnt/boot
+mount /dev/nvme0n1p1 /mnt/boot
+
+#Mount swap partition
+swapon /dev/nvme0n1p2
 
 #------------------------------------------------------------------------------
 # Install Packages
