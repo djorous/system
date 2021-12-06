@@ -1,7 +1,10 @@
 #Connect to Wifi
 #nmcli dev wifi connect SKY19F52 password FACADA1010
 
-#qemu libvirt virt-manager iptables-nft dnsmasq bridge-utils edk2-ovmf dmidecode
-#systemctl enable libvirtd  
-#gnome-software-packagekit-plugin
+virt-manager qemu qemu-arch-extra edk2-ovmf bridge-utils dnsmasq vde2 openbsd-netcat iptables-nft ipset firewalld 
 
+pacman -S grub efibootmgr networkmanager network-manager-applet
+dialog wpa_supplicant mtools dosfstools reflector base-devel linux-headers 
+avahi xdg-user-dirs xdg-utils gvfs gvfs-smb nfs-utils inetutils dnsutils 
+bluez bluez-utils cups hplip alsa-utils pipewire pipewire-alsa pipewire-pulse pipewire-jack 
+bash-completion openssh rsync reflector acpi acpi_call tlp
