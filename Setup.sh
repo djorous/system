@@ -101,7 +101,7 @@ cp -r /root/Arch_Automation /mnt/root/Arch_Automation
 genfstab -U /mnt >> /mnt/etc/fstab
 
 #Change root into the new system:
-arch-chroot /mnt /bin/bash <<EOF
+#arch-chroot /mnt /bin/bash <<EOF
 
 #------------------------------------------------------------------------------
 # Initial Configuration
