@@ -236,7 +236,7 @@ sed -i '5s/.//' /etc/gdm/custom.conf
 #------------------------------------------------------------------------------
 # Enable Services
 #------------------------------------------------------------------------------
-#Start services"
+#Start services
 systemctl enable acpid
 systemctl enable bluetooth
 systemctl enable cronie
