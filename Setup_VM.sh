@@ -229,8 +229,7 @@ echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 # Setup DE
 #------------------------------------------------------------------------------
 #Install Software
-pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks gnome-software-packagekit-plugin evolution
-adwaita-icon-theme arc-gtk-theme-eos arc-x-icons-theme eog evince file-roller gdm gedit gnome-control-center gnome-disk-utility gnome-keyring gnome-nettool gnome-screenshot gnome-shell gnome-terminal gnome-themes-extra gnome-tweaks gnome-usage gvfs gvfs-afc gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb nautilus nautilus-sendto sushi totem xdg-user-dirs-gtk firefox
+pacman -S --noconfirm nvidia nvidia-utils nvidia-settings adwaita-icon-theme arc-gtk-theme-eos arc-x-icons-theme eog evince file-roller gdm gedit gnome-control-center gnome-disk-utility gnome-keyring gnome-nettool gnome-screenshot gnome-shell gnome-terminal gnome-themes-extra gnome-tweaks gnome-usage gvfs gvfs-afc gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb nautilus nautilus-sendto sushi totem xdg-user-dirs-gtk firefox
 #Disable Wayland
 sed -i '5s/.//' /etc/gdm/custom.conf
 
