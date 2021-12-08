@@ -17,11 +17,11 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sda
   n # new partition
   2 # partion number 2
     # default, start immediately after preceding partition
-  +16G # swap partition
+  +4G # swap partition
   n # new partition
   3 # partion number 3
     # default, start immediately after preceding partition
-  +250G # / partition
+  +40G # / partition
   n # new partition
   4 # partion number 4
     # default, start immediately after preceding partition
@@ -230,6 +230,7 @@ echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 #------------------------------------------------------------------------------
 #Install Software
 pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-tweaks gnome-software-packagekit-plugin evolution
+adwaita-icon-theme arc-gtk-theme-eos arc-x-icons-theme eog evince file-roller gdm gedit gnome-control-center gnome-disk-utility gnome-keyring gnome-nettool gnome-screenshot gnome-shell gnome-terminal gnome-themes-extra gnome-tweaks gnome-usage gvfs gvfs-afc gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb nautilus nautilus-sendto sushi totem xdg-user-dirs-gtk firefox
 #Disable Wayland
 sed -i '5s/.//' /etc/gdm/custom.conf
 
@@ -264,8 +265,9 @@ git clone https://aur.archlinux.org/paru-bin.git
 cd /home/djorous/paru-bin
 #Start build
 makepkg --syncdeps --install --needed --noconfirm
-#Install Chrome
-paru -S --noconfirm google-chrome chrome-gnome-shell timeshift timeshift-autosnap
+#Install packages
+paru -S --noconfirm timeshift timeshift-autosnap
+#google-chrome chrome-gnome-shell 
 #Close
 EOF
 
