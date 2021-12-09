@@ -110,7 +110,7 @@ cp -r /root/Arch_Automation /mnt/root/Arch_Automation
 genfstab -U /mnt >> /mnt/etc/fstab
 
 #Change root into the new system:
-#arch-chroot /mnt /bin/bash <<EOF
+arch-chroot /mnt /bin/bash <<EOF
 
 #------------------------------------------------------------------------------
 # Initial Configuration
@@ -270,7 +270,7 @@ systemctl enable NetworkManager
 systemctl enable paccache.timer
 systemctl enable reflector.timer
 systemctl enable sshd
-#EOF
+EOF
 
 #------------------------------------------------------------------------------
 # Setup Paru + AUR
