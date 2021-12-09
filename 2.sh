@@ -86,7 +86,7 @@ cp /root/Arch_Automation/Files/reflector.conf /etc/xdg/reflector/
 # Install software
 #------------------------------------------------------------------------------
 #Networking
-yes | pacman -S iptables-nft 
+yes | pacman -S 
 
 #------------------------------------------------------------------------------
 # Disable Wayland
