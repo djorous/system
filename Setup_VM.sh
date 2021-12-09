@@ -110,7 +110,7 @@ cp -r /root/Arch_Automation /mnt/root/Arch_Automation
 genfstab -U /mnt >> /mnt/etc/fstab
 
 #Change root into the new system:
-arch-chroot /mnt /bin/bash <<EOF
+#arch-chroot /mnt /bin/bash <<EOF
 
 #------------------------------------------------------------------------------
 # Initial Configuration
@@ -222,7 +222,6 @@ chmod +x /usr/lib/systemd/system-shutdown/nvidia.shutdown
 #------------------------------------------------------------------------------
 #Set the root password
 echo root:5927 | chpasswd
-
 #Create non-root user
 useradd -m -G wheel djorous
 #Set the password
@@ -238,7 +237,7 @@ echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 # Setup DE
 #------------------------------------------------------------------------------
 #Install Software
-pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-extra gnome-tweaks gnome-software-packagekit-plugin firefox
+pacman -S nvidia nvidia-utils nvidia-settings gnome gnome-tweaks firefox
 #Disable Wayland
 sed -i '5s/.//' /etc/gdm/custom.conf
 
@@ -246,13 +245,13 @@ sed -i '5s/.//' /etc/gdm/custom.conf
 # Setup DE
 #------------------------------------------------------------------------------
 #Install software VM 
-pacman -S --noconfirm virt-manager qemu qemu-arch-extra edk2-ovmf vde2
+pacman -S virt-manager qemu qemu-arch-extra edk2-ovmf vde2
 
 #------------------------------------------------------------------------------
 # Install system fonts
 #------------------------------------------------------------------------------
 #Install group of fonts for general purpose 
-pacman -S --noconfirm dina-font tamsyn-font bdf-unifont ttf-bitstream-vera ttf-croscore ttf-dejavu ttf-droid gnu-free-fonts ttf-ibm-plex ttf-liberation ttf-linux-libertine noto-fonts ttf-roboto tex-gyre-fonts tf-ubuntu-font-family ttf-anonymous-pro ttf-cascadia-code ttf-fantasque-sans-mono ttf-fira-mono ttf-hack ttf-fira-code ttf-inconsolata ttf-jetbrains-mono ttf-monofur adobe-source-code-pro-fonts cantarell-fonts inter-font ttf-opensans gentium-plus-font ttf-junicode adobe-source-han-sans-otc-fonts adobe-source-han-serif-otc-fonts noto-fonts-cjk noto-fonts-emoji
+pacman -S dina-font tamsyn-font bdf-unifont ttf-bitstream-vera ttf-croscore ttf-dejavu ttf-droid gnu-free-fonts ttf-ibm-plex ttf-liberation ttf-linux-libertine noto-fonts ttf-roboto tex-gyre-fonts tf-ubuntu-font-family ttf-anonymous-pro ttf-cascadia-code ttf-fantasque-sans-mono ttf-fira-mono ttf-hack ttf-fira-code ttf-inconsolata ttf-jetbrains-mono ttf-monofur adobe-source-code-pro-fonts cantarell-fonts inter-font ttf-opensans gentium-plus-font ttf-junicode adobe-source-han-sans-otc-fonts adobe-source-han-serif-otc-fonts noto-fonts-cjk noto-fonts-emoji
 
 #------------------------------------------------------------------------------
 # Enable Services
@@ -276,22 +275,22 @@ EOF
 # Setup Paru + AUR
 #------------------------------------------------------------------------------
 #Change root into the new system:
-arch-chroot /mnt /bin/bash <<EOF
-#Change user
-sudo -i -u djorous
-#Set home directory
-cd /home/djorous
-#Clone rep
-git clone https://aur.archlinux.org/paru-bin.git
-#Enter local repository copy
-cd /home/djorous/paru-bin
-#Start build
-makepkg --syncdeps --install --needed --noconfirm
-#Install packages
-paru -S --noconfirm timeshift timeshift-autosnap
-#google-chrome chrome-gnome-shell 
-#Close
-EOF
+#arch-chroot /mnt /bin/bash <<EOF
+##Change user
+#sudo -i -u djorous
+##Set home directory
+#cd /home/djorous
+##Clone rep
+#git clone https://aur.archlinux.org/paru-bin.git
+##Enter local repository copy
+#cd /home/djorous/paru-bin
+##Start build
+#makepkg --syncdeps --install --needed --noconfirm
+##Install packages
+#paru -S --noconfirm timeshift timeshift-autosnap
+##google-chrome chrome-gnome-shell 
+##Close
+#EOF
 
 #------------------------------------------------------------------------------
 # Cleanup
@@ -303,6 +302,14 @@ EOF
 #Delete install folders
 rm -rf /mnt/root/Arch_Automation
 rm -rf /mnt/home/djorous/paru-bin
+
+#------------------------------------------------------------------------------
+# Late Installs to avoid issues
+#------------------------------------------------------------------------------
+#Install packagekit
+arch-chroot /mnt /bin/bash <<EOF
+pacman -S gnome-software-packagekit-plugin
+EOF
 
 #------------------------------------------------------------------------------
 #Syncronize Locate
