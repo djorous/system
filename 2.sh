@@ -39,14 +39,6 @@ echo "export EDITOR=nano" >> /etc/environment
 #------------------------------------------------------------------------------
 # Configure Bootloader
 #------------------------------------------------------------------------------
-#Networking
-pacman -S bridge-utils dnsmasq firewalld iptables-nft networkmanager
-#Software
-pacman -S bash-completion cronie git nano nvidia nvidia-utils nvidia-settings logrotate mlocate openssh pacman-contrib reflector
-
-#------------------------------------------------------------------------------
-# Configure Bootloader
-#------------------------------------------------------------------------------
 #Backup Original File
 mv /etc/default/grub /etc/default/grub_original
 #Change grub file
@@ -83,6 +75,20 @@ pacman -Syu
 mv /etc/xdg/reflector/reflector.conf /etc/xdg/reflector/reflector.conf_original
 #Copy new version over
 cp /root/Arch_Automation/Files/reflector.conf /etc/xdg/reflector/
+
+#------------------------------------------------------------------------------
+# Install software
+#------------------------------------------------------------------------------
+#Networking
+pacman -S iptables-nft 
+#Software
+pacman -S bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
+
+#------------------------------------------------------------------------------
+# Disable Wayland
+#------------------------------------------------------------------------------
+#Disable Wayland
+sed -i '5s/.//' /etc/gdm/custom.conf
 
 #------------------------------------------------------------------------------
 # Set Swappiness to 1
@@ -129,26 +135,6 @@ echo djorous:5927 | chpasswd
 echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 
 #------------------------------------------------------------------------------
-# Setup DE
-#------------------------------------------------------------------------------
-#Install Software
-pacman -S gnome gnome-tweaks firefox
-#Disable Wayland
-sed -i '5s/.//' /etc/gdm/custom.conf
-
-#------------------------------------------------------------------------------
-# Setup DE
-#------------------------------------------------------------------------------
-#Install software VM 
-pacman -S virt-manager qemu qemu-arch-extra edk2-ovmf vde2
-
-#------------------------------------------------------------------------------
-# Install system fonts
-#------------------------------------------------------------------------------
-#Install group of fonts for general purpose 
-pacman -S dina-font tamsyn-font bdf-unifont ttf-bitstream-vera ttf-croscore ttf-dejavu ttf-droid gnu-free-fonts ttf-ibm-plex ttf-liberation ttf-linux-libertine noto-fonts ttf-roboto tex-gyre-fonts tf-ubuntu-font-family ttf-anonymous-pro ttf-cascadia-code ttf-fantasque-sans-mono ttf-fira-mono ttf-hack ttf-fira-code ttf-inconsolata ttf-jetbrains-mono ttf-monofur adobe-source-code-pro-fonts cantarell-fonts inter-font ttf-opensans gentium-plus-font ttf-junicode adobe-source-han-sans-otc-fonts adobe-source-han-serif-otc-fonts noto-fonts-cjk noto-fonts-emoji
-
-#------------------------------------------------------------------------------
 # Enable Services
 #------------------------------------------------------------------------------
 #Start services
@@ -164,7 +150,7 @@ systemctl enable NetworkManager
 systemctl enable paccache.timer
 systemctl enable reflector.timer
 systemctl enable sshd
-EOF
+
 #------------------------------------------------------------------------------
 # Late Installs to avoid issues
 #------------------------------------------------------------------------------

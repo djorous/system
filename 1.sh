@@ -87,11 +87,7 @@ swapon /dev/sda2
 #------------------------------------------------------------------------------
 #Use the pacstrap(8) script to install the base package, Linux kernel and firmware for common hardware
 #Base
-pacstrap /mnt base linux linux-firmware linux-headers util-linux
-#Boot
-pacstrap /mnt grub efibootmgr os-prober
-#Hardware
-pacstrap /mnt amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g
+pacstrap /mnt base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector
 
 #------------------------------------------------------------------------------
 # Move Installer
