@@ -59,6 +59,8 @@ grub-mkconfig -o /boot/grub/grub.cfg
 mv /etc/mkinitcpio.conf /etc/mkinitcpio.conf_original
 #Change mkinitcpio.conf file
 cp /root/Arch_Automation/Files/mkinitcpio.conf /etc/
+#Run mkinitcpio
+mkinitcpio -P
 
 #------------------------------------------------------------------------------
 # Configure Pacman
@@ -85,8 +87,6 @@ cp /root/Arch_Automation/Files/reflector.conf /etc/xdg/reflector/
 #------------------------------------------------------------------------------
 #Networking
 yes | pacman -S iptables-nft 
-#Software
-#pacman -S bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
 
 #------------------------------------------------------------------------------
 # Disable Wayland
