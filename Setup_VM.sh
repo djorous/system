@@ -149,9 +149,9 @@ echo "export EDITOR=nano" >> /etc/environment
 # Configure Bootloader
 #------------------------------------------------------------------------------
 #Networking
-pacman -S networkmanager iptables-nft firewalld bridge-utils dnsmasq
+pacman -S bridge-utils dnsmasq firewalld iptables-nft networkmanager
 #Software
-pacman -S git nano reflector openssh cronie mlocate logrotate pacman-contrib bash-completion
+pacman -S bash-completion cronie git nano logrotate mlocate openssh pacman-contrib reflector
 
 #------------------------------------------------------------------------------
 # Configure Bootloader
