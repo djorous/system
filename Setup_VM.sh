@@ -86,7 +86,16 @@ swapon /dev/sda2
 # Install Packages
 #------------------------------------------------------------------------------
 #Use the pacstrap(8) script to install the base package, Linux kernel and firmware for common hardware
-pacstrap /mnt base btrfs-progs linux linux-firmware amd-ucode git nano reflector grub efibootmgr networkmanager acpi acpi_call acpid base-devel bash-completion openssh os-prober util-linux cronie ntfs-3g mlocate logrotate pacman-contrib
+#Base
+pacstrap /mnt base linux linux-firmware linux-headers util-linux
+#Boot
+pacstrap /mnt grub efibootmgr os-prober
+#Hardware
+pacstrap /mnt amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g
+#Networking
+pacstrap /mnt networkmanager iptables-nft firewalld bridge-utils dnsmasq
+#Software
+pacstrap /mnt git nano reflector openssh cronie mlocate logrotate pacman-contrib bash-completion
 
 #------------------------------------------------------------------------------
 # Move Installer
@@ -101,7 +110,7 @@ cp -r /root/Arch_Automation /mnt/root/Arch_Automation
 genfstab -U /mnt >> /mnt/etc/fstab
 
 #Change root into the new system:
-arch-chroot /mnt /bin/bash <<EOF
+#arch-chroot /mnt /bin/bash <<EOF
 
 #------------------------------------------------------------------------------
 # Initial Configuration
@@ -229,9 +238,21 @@ echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
 # Setup DE
 #------------------------------------------------------------------------------
 #Install Software
-pacman -S --noconfirm nvidia nvidia-utils nvidia-settings adwaita-icon-theme arc-gtk-theme-eos arc-x-icons-theme eog evince file-roller gdm gedit gnome-control-center gnome-disk-utility gnome-keyring gnome-nettool gnome-screenshot gnome-shell gnome-terminal gnome-themes-extra gnome-tweaks gnome-usage gvfs gvfs-afc gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb nautilus nautilus-sendto sushi totem xdg-user-dirs-gtk firefox
+pacman -S --noconfirm nvidia nvidia-utils nvidia-settings gnome gnome-extra gnome-tweaks gnome-software-packagekit-plugin firefox
 #Disable Wayland
 sed -i '5s/.//' /etc/gdm/custom.conf
+
+#------------------------------------------------------------------------------
+# Setup DE
+#------------------------------------------------------------------------------
+#Install software VM 
+pacman -S --noconfirm virt-manager qemu qemu-arch-extra edk2-ovmf vde2
+
+#------------------------------------------------------------------------------
+# Install system fonts
+#------------------------------------------------------------------------------
+#Install group of fonts for general purpose 
+dina-font tamsyn-font bdf-unifont ttf-bitstream-vera ttf-croscore ttf-dejavu ttf-droid gnu-free-fonts ttf-ibm-plex ttf-liberation ttf-linux-libertine noto-fonts ttf-roboto tex-gyre-fonts tf-ubuntu-font-family ttf-anonymous-pro ttf-cascadia-code ttf-fantasque-sans-mono ttf-fira-mono ttf-hack ttf-fira-code ttf-inconsolata ttf-jetbrains-mono ttf-monofur adobe-source-code-pro-fonts cantarell-fonts inter-font ttf-opensans gentium-plus-font ttf-junicode adobe-source-han-sans-otc-fonts adobe-source-han-serif-otc-fonts noto-fonts-cjk noto-fonts-emoji
 
 #------------------------------------------------------------------------------
 # Enable Services
@@ -240,14 +261,16 @@ sed -i '5s/.//' /etc/gdm/custom.conf
 systemctl enable acpid
 systemctl enable bluetooth
 systemctl enable cronie
+systemctl enable firewalld
 systemctl enable fstrim.timer
 systemctl enable gdm
+systemctl enable libvirtd
 systemctl enable logrotate.timer
 systemctl enable NetworkManager
 systemctl enable paccache.timer
 systemctl enable reflector.timer
 systemctl enable sshd
-EOF
+#EOF
 
 #------------------------------------------------------------------------------
 # Setup Paru + AUR
