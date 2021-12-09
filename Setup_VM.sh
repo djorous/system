@@ -92,10 +92,6 @@ pacstrap /mnt base linux linux-firmware linux-headers util-linux
 pacstrap /mnt grub efibootmgr os-prober
 #Hardware
 pacstrap /mnt amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g
-#Networking
-pacstrap /mnt networkmanager iptables-nft firewalld bridge-utils dnsmasq
-#Software
-pacstrap /mnt git nano reflector openssh cronie mlocate logrotate pacman-contrib bash-completion
 
 #------------------------------------------------------------------------------
 # Move Installer
@@ -148,6 +144,14 @@ echo "127.0.1.1 arch.localdomain arch" >> /etc/hosts
 #Set default editor to nano
 echo "export VISUAL=nano" >> /etc/environment 
 echo "export EDITOR=nano" >> /etc/environment
+
+#------------------------------------------------------------------------------
+# Configure Bootloader
+#------------------------------------------------------------------------------
+#Networking
+pacman -S networkmanager iptables-nft firewalld bridge-utils dnsmasq
+#Software
+pacman -S git nano reflector openssh cronie mlocate logrotate pacman-contrib bash-completion
 
 #------------------------------------------------------------------------------
 # Configure Bootloader
