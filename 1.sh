@@ -87,7 +87,8 @@ swapon /dev/sda2
 #------------------------------------------------------------------------------
 #Use the pacstrap(8) script to install the base package, Linux kernel and firmware for common hardware
 #Base
-pacstrap /mnt base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector
+reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country 'Ireland,United Kingdom,' --latest 10 --sort rate --age 12
+pacstrap -i -C ./Files/pacman.conf /mnt base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
 
 #------------------------------------------------------------------------------
 # Move Installer
