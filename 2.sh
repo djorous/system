@@ -1,37 +1,41 @@
 #!/bin/bash
 #------------------------------------------------------------------------------
-# Initial Configuration
+# Clock Setup
 #------------------------------------------------------------------------------
 #Use timedatectl(1) to ensure the system clock is accurate
 timedatectl set-ntp true
-
 #Set the time zone
 ln -sf /usr/share/zoneinfo/Europe/Dublin /etc/localtime
-
 #Run hwclock(8) to generate /etc/adjtime
 hwclock --systohc
 
+#------------------------------------------------------------------------------
+# Setup Location
+#------------------------------------------------------------------------------
 #Edit /etc/locale.gen and uncomment en_GB.UTF-8 UTF-8 (line 160) and other needed locales
 sed -i '160s/.//' /etc/locale.gen
 locale-gen
-
 #Create the locale.conf(5) file, and set the LANG variable accordingly
 echo "LANG=en_GB.UTF-8" >> /etc/locale.conf
 echo "LANGUAGE=en_GB.UTF-8" >> /etc/locale.conf
 echo "LC_MESSAGES=en_GB.UTF-8" >> /etc/locale.conf
 echo "LC_ALL=en_GB.UTF-8" >> /etc/locale.conf
-
 #Set the console keyboard layout, make the changes persistent in vconsole.conf
 echo "KEYMAP=uk" >> /etc/vconsole.conf
 
+#------------------------------------------------------------------------------
+# Network Configuration
+#------------------------------------------------------------------------------
 #Create the hostname file
 echo "arch" >> /etc/hostname
-
 #Setup localhost
 echo "127.0.0.1 localhost" >> /etc/hosts
 echo "::1       localhost" >> /etc/hosts
 echo "127.0.1.1 arch.localdomain arch" >> /etc/hosts
 
+#------------------------------------------------------------------------------
+# Update Export 
+#------------------------------------------------------------------------------
 #Set default editor to nano
 echo "export VISUAL=nano" >> /etc/environment 
 echo "export EDITOR=nano" >> /etc/environment
