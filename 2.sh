@@ -84,7 +84,7 @@ cp /root/Arch_Automation/Files/reflector.conf /etc/xdg/reflector/
 # Install software
 #------------------------------------------------------------------------------
 #Networking
-pacman -S iptables-nft 
+yes | pacman -S iptables-nft 
 #Software
 pacman -S bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
 
