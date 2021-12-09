@@ -92,7 +92,7 @@ reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country 'Ire
 # Install Packages
 #------------------------------------------------------------------------------
 #Use the pacstrap(8) script to install the base package, Linux kernel and firmware for common hardware
-yes | pacstrap -i -C /root/Arch_Automation/Files/pacman.conf /mnt base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager > /root/Arch_Automation/pacstrap.log
+pacstrap -C /root/Arch_Automation/Files/pacman.conf /mnt base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
 
 #------------------------------------------------------------------------------
 # Move Installer

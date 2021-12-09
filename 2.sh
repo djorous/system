@@ -83,12 +83,6 @@ mv /etc/xdg/reflector/reflector.conf /etc/xdg/reflector/reflector.conf_original
 cp /root/Arch_Automation/Files/reflector.conf /etc/xdg/reflector/
 
 #------------------------------------------------------------------------------
-# Install software
-#------------------------------------------------------------------------------
-#Networking
-yes | pacman -S 
-
-#------------------------------------------------------------------------------
 # Disable Wayland
 #------------------------------------------------------------------------------
 #Disable Wayland
