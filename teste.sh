@@ -2,6 +2,8 @@
 #------------------------------------------------------------------------------
 # Set Parameters
 #------------------------------------------------------------------------------
+#Keyboard layout
+keyboard=uk
 #Name from /dev
 diskname=sda
 #Size in MB
@@ -10,6 +12,17 @@ efisize=512
 swapsize=4
 #Size in GB
 rootsize=40
+#Reflector countries
+countries='Ireland,United Kingdom,'
+#Timezone
+timezone=Europe/Dublin 
+
+#------------------------------------------------------------------------------
+# Set Keyboard
+#------------------------------------------------------------------------------
+#Load configuration for keyboard region
+loadkeys=$keyboard
+
 #------------------------------------------------------------------------------
 # Clear disk
 #------------------------------------------------------------------------------
@@ -58,3 +71,78 @@ mkswap /dev/"${diskname}2"
 mkfs.btrfs -f /dev/"${diskname}3"
 #Create a btrfs partition in /dev/sda4
 mkfs.btrfs -f /dev/"${diskname}4"
+
+#------------------------------------------------------------------------------
+# Mount / and create subvolumes
+#------------------------------------------------------------------------------
+#Mount partitions
+mount /dev/"${diskname}3" /mnt
+#Create subvolume for /
+cd /mnt
+btrfs subvolume create @
+#Umount
+cd /root
+umount /mnt
+
+#Mount partitions
+mount /dev/"${diskname}4" /mnt
+#Create subvolume for /home
+cd /mnt
+btrfs subvolume create @home
+#Umount
+cd /root
+umount /mnt
+
+#Remount / subvolume
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/"${diskname}3" /mnt
+btrfs quota enable /mnt
+
+#Create mount point directories
+mkdir /mnt/{boot,home}
+
+#Mount /home subvolume
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskname}4" /mnt/home
+btrfs quota enable /mnt/home
+
+#Mount boot partition
+mount /dev/"${diskname}1" /mnt/boot
+
+#Mount swap partition
+swapon /dev/"${diskname}2"
+
+#------------------------------------------------------------------------------
+# Update Mirrorlist
+#------------------------------------------------------------------------------
+#Run reflector
+reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country "$countries" --latest 10 --sort rate --age 12
+
+#------------------------------------------------------------------------------
+# Install Packages
+#------------------------------------------------------------------------------
+#Use the pacstrap(8) script to install the base package, Linux kernel and firmware for common hardware
+pacstrap -C /root/Arch_Automation/Files/pacman.conf /mnt base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
+
+#------------------------------------------------------------------------------
+# Move Installer
+#------------------------------------------------------------------------------
+#Copy Git Automation to new mounted point
+cp -r /root/Arch_Automation /mnt/root/Arch_Automation
+
+#------------------------------------------------------------------------------
+# Prepare Partition and Chroot Into new partition
+#------------------------------------------------------------------------------
+#Generate an fstab file (use -U or -L to define by UUID or labels, respectively):
+genfstab -U /mnt >> /mnt/etc/fstab
+
+#------------------------------------------------------------------------------
+# Clock Setup
+#------------------------------------------------------------------------------
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
+#Use timedatectl(1) to ensure the system clock is accurate
+timedatectl set-ntp true
+#Run hwclock(8) to generate /etc/adjtime
+hwclock --systohc
+#Set the time zone
+ln -sf /usr/share/zoneinfo/$timezone /etc/localtime
+EOF
