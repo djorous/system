@@ -140,7 +140,7 @@ reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country "$co
 # Install Packages
 #------------------------------------------------------------------------------
 #Use the pacstrap(8) script to install the base package, Linux kernel and firmware for common hardware
-pacstrap -i -C /root/Arch_Automation/Files/pacman.conf /mnt "$packages"
+pacstrap -i -C /root/Arch_Automation/Files/pacman.conf /mnt $packages
 
 #------------------------------------------------------------------------------
 # Move Installer
@@ -189,7 +189,7 @@ echo "KEYMAP="$keyboard >> /mnt/etc/vconsole.conf
 # Network Configuration
 #------------------------------------------------------------------------------
 #Create the hostname file
-echo "$hostname" >> /mnt/etc/hostname
+echo $hostname >> /mnt/etc/hostname
 #Setup localhost
 echo "127.0.0.1 localhost" >> /mnt/etc/hosts
 echo "::1       localhost" >> /mnt/etc/hosts
@@ -333,4 +333,3 @@ EOF
 arch-chroot /mnt /bin/bash <<EOF
 #Install packagekit
 pacman -S gnome-software-packagekit-plugin
-EOF
