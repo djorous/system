@@ -3,39 +3,39 @@
 # Set Parameters
 #------------------------------------------------------------------------------
 #Keyboard layout
-keyboard=uk
+keyboard="uk"
 #Name from /dev
-diskname=sda
+diskname="sda"
 #Size in MB
-efisize=512
+efisize="512"
 #Size in GB
-swapsize=4
+swapsize="4"
 #Size in GB
-rootsize=40
+rootsize="40"
 #Reflector countries
 countries='Ireland,United Kingdom,'
 #Timezone
-timezone=Europe/Dublin
+timezone="Europe/Dublin"
 #Package list
-packages=base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
+packages="base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager"
 #Set Locale
-locale=en_GB.UTF-8 UTF-8
+locale="en_GB.UTF-8 UTF-8"
 #Set Language
-language=en_GB.UTF-8
+language="en_GB.UTF-8"
 #Set Hostname
-hostname=arch
+hostname="arch"
 #Set Default Editor
-editor=nano
+editor="nano"
 #Set Swappiness
-swappiness=1
+swappiness="1"
 #Set Journal Size
-journalsize=50M
+journalsize="50M"
 #Set root password
-rootpass=5927
+rootpass="5927"
 #Set new user name
-username=djorous
+username="djorous"
 #Set user password
-userpass=5927
+userpass="5927"
 
 #------------------------------------------------------------------------------
 # Set Keyboard
@@ -171,7 +171,7 @@ EOF
 # Setup Location
 #------------------------------------------------------------------------------
 #Edit /etc/locale.gen and uncomment en_GB.UTF-8 UTF-8 (line 160) and other needed locales
-echo "$locale" >> /mnt/etc/locale.gen
+echo $locale >> /mnt/etc/locale.gen
 #Chroot into installation
 arch-chroot /mnt /bin/bash <<EOF
 locale-gen
