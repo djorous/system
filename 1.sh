@@ -297,7 +297,7 @@ echo root:$rootpass | chpasswd
 #Create non-root user
 useradd -m -G wheel $username
 #Set the password
-echo $username":"userpass | chpasswd
+echo $username":"$userpass | chpasswd
 EOF
 
 #------------------------------------------------------------------------------
@@ -333,3 +333,4 @@ EOF
 arch-chroot /mnt /bin/bash <<EOF
 #Install packagekit
 pacman -S gnome-software-packagekit-plugin
+EOF
