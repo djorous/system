@@ -24,15 +24,15 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/$diskname
   n # new partition
   1 # partition number 1
     # default - start at beginning of disk 
-  "+${efisize}M" # 100 MB boot parttion
+  +${efisize}M # boot parttion size
   n # new partition
   2 # partion number 2
     # default, start immediately after preceding partition
-  +4G # swap partition
+  +${swapsize}G # swap partition
   n # new partition
   3 # partion number 3
     # default, start immediately after preceding partition
-  +40G # / partition
+  +${rootsize}G  # / partition
   n # new partition
   4 # partion number 4
     # default, start immediately after preceding partition
