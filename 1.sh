@@ -16,6 +16,26 @@ rootsize=40
 countries='Ireland,United Kingdom,'
 #Timezone
 timezone=Europe/Dublin
+#Package list
+packages=base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
+#Set Locale
+locale=en_GB.UTF-8 UTF-8
+#Set Language
+language=en_GB.UTF-8
+#Set Hostname
+hostname=arch
+#Set Default Editor
+editor=nano
+#Set Swappiness
+swappiness=1
+#Set Journal Size
+journalsize=50M
+#Set root password
+rootpass=5927
+#Set new user name
+username=djorous
+#Set user password
+userpass=5927
 
 #------------------------------------------------------------------------------
 # Set Keyboard
@@ -120,7 +140,7 @@ reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country "$co
 # Install Packages
 #------------------------------------------------------------------------------
 #Use the pacstrap(8) script to install the base package, Linux kernel and firmware for common hardware
-pacstrap -C /root/Arch_Automation/Files/pacman.conf /mnt base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
+pacstrap -i -C /root/Arch_Automation/Files/pacman.conf /mnt "$packages"
 
 #------------------------------------------------------------------------------
 # Move Installer
@@ -144,43 +164,43 @@ timedatectl set-ntp true
 #Run hwclock(8) to generate /etc/adjtime
 hwclock --systohc
 #Set the time zone
-ln -sf /usr/share/zoneinfo/$timezone /etc/localtime
+ln -sf /usr/share/zoneinfo/"$timezone" /etc/localtime
 EOF
 
 #------------------------------------------------------------------------------
 # Setup Location
 #------------------------------------------------------------------------------
 #Edit /etc/locale.gen and uncomment en_GB.UTF-8 UTF-8 (line 160) and other needed locales
-sed -i '160s/.//' /etc/locale.gen
+echo "$locale" >> /mnt/etc/locale.gen
 #Chroot into installation
 arch-chroot /mnt /bin/bash <<EOF
 locale-gen
 EOF
 
 #Create the locale.conf(5) file, and set the LANG variable accordingly
-echo "LANG=en_GB.UTF-8" >> /etc/locale.conf
-echo "LANGUAGE=en_GB.UTF-8" >> /etc/locale.conf
-echo "LC_MESSAGES=en_GB.UTF-8" >> /etc/locale.conf
-echo "LC_ALL=en_GB.UTF-8" >> /etc/locale.conf
+echo "LANG="$language >> /mnt/etc/locale.conf
+echo "LANGUAGE="$language >> /mnt/etc/locale.conf
+echo "LC_MESSAGES="$language >> /mnt/etc/locale.conf
+echo "LC_ALL="$language >> /mnt/etc/locale.conf
 #Set the console keyboard layout, make the changes persistent in vconsole.conf
-echo "KEYMAP=uk" >> /etc/vconsole.conf
+echo "KEYMAP="$keyboard >> /mnt/etc/vconsole.conf
 
 #------------------------------------------------------------------------------
 # Network Configuration
 #------------------------------------------------------------------------------
 #Create the hostname file
-echo "arch" >> /etc/hostname
+echo "$hostname" >> /mnt/etc/hostname
 #Setup localhost
-echo "127.0.0.1 localhost" >> /etc/hosts
-echo "::1       localhost" >> /etc/hosts
-echo "127.0.1.1 arch.localdomain arch" >> /etc/hosts
+echo "127.0.0.1 localhost" >> /mnt/etc/hosts
+echo "::1       localhost" >> /mnt/etc/hosts
+echo "127.0.1.1 arch.localdomain arch" >> /mnt/etc/hosts
 
 #------------------------------------------------------------------------------
 # Update Export 
 #------------------------------------------------------------------------------
 #Set default editor to nano
-echo "export VISUAL=nano" >> /etc/environment 
-echo "export EDITOR=nano" >> /etc/environment
+echo "export VISUAL="$editor >> /mnt/etc/environment 
+echo "export EDITOR="$editor >> /mnt/etc/environment
 
 #------------------------------------------------------------------------------
 # Configure Bootloader
@@ -206,7 +226,9 @@ mv /mnt/etc/mkinitcpio.conf /mnt/etc/mkinitcpio.conf_original
 #Change mkinitcpio.conf file
 cp /root/Arch_Automation/Files/mkinitcpio.conf /mnt/etc/
 #Run mkinitcpio
+arch-chroot /mnt /bin/bash <<EOF
 mkinitcpio -P
+EOF
 
 #------------------------------------------------------------------------------
 # Configure Pacman
@@ -219,6 +241,10 @@ cp /root/Arch_Automation/Files/pacman.conf /mnt/etc/
 #------------------------------------------------------------------------------
 # Update Mirrorlist
 #------------------------------------------------------------------------------
+#Backup Original File
+mv /mnt/etc/xdg/reflector/reflector.conf /mnt/etc/xdg/reflector/reflector.conf_original
+#Copy new version over
+cp /root/Arch_Automation/Files/reflector.conf /mnt/etc/xdg/reflector/
 #Chroot into installation
 arch-chroot /mnt /bin/bash <<EOF
 #Run Reflector
@@ -226,10 +252,6 @@ reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country 'Ire
 #Sync Packages
 pacman -Syu
 EOF
-#Backup Original File
-mv /mnt/etc/xdg/reflector/reflector.conf /mnt/etc/xdg/reflector/reflector.conf_original
-#Copy new version over
-cp /root/Arch_Automation/Files/reflector.conf /mnt/etc/xdg/reflector/
 
 #------------------------------------------------------------------------------
 # Disable Wayland
@@ -241,7 +263,7 @@ sed -i '5s/.//' /mnt/etc/gdm/custom.conf
 # Set Swappiness to 1
 #------------------------------------------------------------------------------
 #Create new file with swappiness configuration
-echo "vm.swappiness=1" >> /mnt/etc/sysctl.d/10-swappiness.conf
+echo "vm.swappiness="$swappiness >> /mnt/etc/sysctl.d/10-swappiness.conf
 
 #------------------------------------------------------------------------------
 # Set Journal size limit
@@ -249,7 +271,7 @@ echo "vm.swappiness=1" >> /mnt/etc/sysctl.d/10-swappiness.conf
 #Create new file with Journal size limit
 mkdir /mnt/etc/systemd/journald.conf.d
 echo "[Journal]" >> /mnt/etc/systemd/journald.conf.d/00-journal-size.conf
-echo "SystemMaxUse=50M" >> /mnt/etc/systemd/journald.conf.d/00-journal-size.conf
+echo "SystemMaxUse="$journalsize >> /mnt/etc/systemd/journald.conf.d/00-journal-size.conf
 
 #------------------------------------------------------------------------------
 # Blacklist Nvidia USB-C and Watchdog modules
@@ -271,18 +293,18 @@ chmod +x /mnt/usr/lib/systemd/system-shutdown/nvidia.shutdown
 #Chroot into installation
 arch-chroot /mnt /bin/bash <<EOF
 #Set the root password
-echo root:5927 | chpasswd
+echo root:$rootpass | chpasswd
 #Create non-root user
-useradd -m -G wheel djorous
+useradd -m -G wheel $username
 #Set the password
-echo djorous:5927 | chpasswd
+echo $username":"userpass | chpasswd
 EOF
 
 #------------------------------------------------------------------------------
 # Add User to Sudo
 #------------------------------------------------------------------------------
 #Set user to sudoers
-echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers.d/djorous
+echo $username" ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers.d/$username
 
 #------------------------------------------------------------------------------
 # Enable Services
