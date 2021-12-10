@@ -140,7 +140,7 @@ reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country "$co
 # Install Packages
 #------------------------------------------------------------------------------
 #Use the pacstrap(8) script to install the base package, Linux kernel and firmware for common hardware
-pacstrap -i -C /root/Arch_Automation/Files/pacman.conf /mnt $packages
+pacstrap -C /root/Arch_Automation/Files/pacman.conf /mnt $packages
 
 #------------------------------------------------------------------------------
 # Move Installer
