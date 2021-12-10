@@ -2,8 +2,14 @@
 #------------------------------------------------------------------------------
 # Set Parameters
 #------------------------------------------------------------------------------
+#Name from /dev
 diskname=sda
-
+#Size in MB
+efisize=512
+#Size in GB
+swapsize=4
+#Size in GB
+rootsize=40
 #------------------------------------------------------------------------------
 # Clear disk
 #------------------------------------------------------------------------------
@@ -18,7 +24,7 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/$diskname
   n # new partition
   1 # partition number 1
     # default - start at beginning of disk 
-  +512M # 100 MB boot parttion
+  "+${efisize}M" # 100 MB boot parttion
   n # new partition
   2 # partion number 2
     # default, start immediately after preceding partition
@@ -44,20 +50,20 @@ EOF
 #------------------------------------------------------------------------------
 # Format Disks
 #------------------------------------------------------------------------------
-#Create a vfat partition in /dev/sda
+#Create a vfat partition in first partition
 mkfs.vfat /dev/"${diskname}1"
-#Create a swap partition in /dev/sda2
+#Create a swap partition in second partition
 mkswap /dev/"${diskname}2"
-#Create a btrfs partition in /dev/sda3
+#Create a btrfs partition in third partition
 mkfs.btrfs -f /dev/"${diskname}3"
-#Create a btrfs partition in /dev/sda4
+#Create a btrfs partition in fourth partition
 mkfs.btrfs -f /dev/"${diskname}4"
 
 #------------------------------------------------------------------------------
 # Mount / and create subvolumes
 #------------------------------------------------------------------------------
 #Mount partitions
-mount /dev/sda3 /mnt
+mount /dev/"${diskname}3" /mnt
 #Create subvolume for /
 cd /mnt
 btrfs subvolume create @
@@ -66,7 +72,7 @@ cd /root
 umount /mnt
 
 #Mount partitions
-mount /dev/sda4 /mnt
+mount /dev/"${diskname}4" /mnt
 #Create subvolume for /home
 cd /mnt
 btrfs subvolume create @home
@@ -75,21 +81,21 @@ cd /root
 umount /mnt
 
 #Remount / subvolume
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/sda3 /mnt
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/"${diskname}3" /mnt
 btrfs quota enable /mnt
 
 #Create mount point directories
 mkdir /mnt/{boot,home}
 
 #Mount /home subvolume
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/sda4 /mnt/home
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskname}4" /mnt/home
 btrfs quota enable /mnt/home
 
 #Mount boot partition
-mount /dev/sda1 /mnt/boot
+mount /dev/"${diskname}1" /mnt/boot
 
 #Mount swap partition
-swapon /dev/sda2
+swapon /dev/"${diskname}2"
 
 #------------------------------------------------------------------------------
 # Update Mirrorlist
