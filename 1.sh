@@ -329,8 +329,5 @@ EOF
 #------------------------------------------------------------------------------
 # Late Installs to avoid issues
 #------------------------------------------------------------------------------
-#Chroot into installation
-arch-chroot /mnt /bin/bash <<EOF
 #Install packagekit
-pacman -S gnome-software-packagekit-plugin
-EOF
+pacstrap -C /root/Arch_Automation/Files/pacman.conf /mnt gnome-software-packagekit-plugin
