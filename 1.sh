@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 #Keyboard layout
 keyboard="uk"
-#Name from /dev
+#Disk Name from /dev
 diskname="sda"
 #Size in MB
 efisize="512"
@@ -327,7 +327,52 @@ systemctl enable sshd
 EOF
 
 #------------------------------------------------------------------------------
+# Setup Paru + AUR
+#------------------------------------------------------------------------------
+#Change root into the new system:
+arch-chroot /mnt /bin/bash <<EOF
+#Change user
+sudo -i -u $username
+#Set home directory
+cd /home/$username
+#Clone rep
+git clone https://aur.archlinux.org/paru-bin.git
+#Enter local repository copy
+cd /home/$username/paru-bin
+#Start build
+makepkg --syncdeps --install --needed --noconfirm
+#Install packages
+paru -S --noconfirm timeshift timeshift-autosnap
+#Close
+EOF
+
+#------------------------------------------------------------------------------
+#Syncronize Locate
+#------------------------------------------------------------------------------
+#Syncronize db
+arch-chroot /mnt /bin/bash <<EOF
+updatedb
+EOF
+
+#------------------------------------------------------------------------------
+# Cleanup
+#------------------------------------------------------------------------------
+#Remove unwanted icons
+cd /mnt/usr/share/applications
+rm avahi-discover.desktop bssh.desktop bvnc.desktop cmake-gui.desktop lstopo.desktop qv4l2.desktop qvidcap.desktop
+
+#Delete install folders
+rm -rf /mnt/root/Arch_Automation
+rm -rf /mnt/home/${username}/paru-bin
+
+#------------------------------------------------------------------------------
 # Late Installs to avoid issues
 #------------------------------------------------------------------------------
 #Install packagekit
 pacstrap -C /root/Arch_Automation/Files/pacman.conf /mnt gnome-software-packagekit-plugin
+
+#------------------------------------------------------------------------------
+#Reboot
+#------------------------------------------------------------------------------
+#Restart System
+systemctl reboot
