@@ -109,19 +109,26 @@ genfstab -U /mnt >> /mnt/etc/fstab
 #------------------------------------------------------------------------------
 # Clock Setup
 #------------------------------------------------------------------------------
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
 #Use timedatectl(1) to ensure the system clock is accurate
 timedatectl set-ntp true
 #Run hwclock(8) to generate /etc/adjtime
 hwclock --systohc
 #Set the time zone
 ln -sf /usr/share/zoneinfo/Europe/Dublin /etc/localtime
+EOF
 
 #------------------------------------------------------------------------------
 # Setup Location
 #------------------------------------------------------------------------------
 #Edit /etc/locale.gen and uncomment en_GB.UTF-8 UTF-8 (line 160) and other needed locales
 sed -i '160s/.//' /etc/locale.gen
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
 locale-gen
+EOF
+
 #Create the locale.conf(5) file, and set the LANG variable accordingly
 echo "LANG=en_GB.UTF-8" >> /etc/locale.conf
 echo "LANGUAGE=en_GB.UTF-8" >> /etc/locale.conf
@@ -151,21 +158,25 @@ echo "export EDITOR=nano" >> /etc/environment
 # Configure Bootloader
 #------------------------------------------------------------------------------
 #Backup Original File
-mv /etc/default/grub /etc/default/grub_original
+mv /mnt/etc/default/grub /mnt/etc/default/grub_original
 #Change grub file
-cp /root/Arch_Automation/Files/grub /etc/default/
+cp /root/Arch_Automation/Files/grub /mnt/etc/default/
+
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
 #Install booloader and generate configuration
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 #Generate configuration
 grub-mkconfig -o /boot/grub/grub.cfg
+EOF
 
 #------------------------------------------------------------------------------
 # Configure Initramfs 
 #------------------------------------------------------------------------------
 #Backup Original File
-mv /etc/mkinitcpio.conf /etc/mkinitcpio.conf_original
+mv /mnt/etc/mkinitcpio.conf /mnt/etc/mkinitcpio.conf_original
 #Change mkinitcpio.conf file
-cp /root/Arch_Automation/Files/mkinitcpio.conf /etc/
+cp /root/Arch_Automation/Files/mkinitcpio.conf /mnt/etc/
 #Run mkinitcpio
 mkinitcpio -P
 
@@ -173,75 +184,83 @@ mkinitcpio -P
 # Configure Pacman
 #------------------------------------------------------------------------------
 #Backup Original File
-mv /etc/pacman.conf /etc/pacman.conf_original
+mv /mnt/etc/pacman.conf /mnt/etc/pacman.conf_original
 #Change pacman.conf file
-cp /root/Arch_Automation/Files/pacman.conf /etc/
+cp /root/Arch_Automation/Files/pacman.conf /mnt/etc/
 
 #------------------------------------------------------------------------------
 # Update Mirrorlist
 #------------------------------------------------------------------------------
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
 #Run Reflector
 reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country 'Ireland,United Kingdom,' --latest 10 --sort rate --age 12
 #Sync Packages
 pacman -Syu
+EOF
 #Backup Original File
-mv /etc/xdg/reflector/reflector.conf /etc/xdg/reflector/reflector.conf_original
+mv /mnt/etc/xdg/reflector/reflector.conf /mnt/etc/xdg/reflector/reflector.conf_original
 #Copy new version over
-cp /root/Arch_Automation/Files/reflector.conf /etc/xdg/reflector/
+cp /root/Arch_Automation/Files/reflector.conf /mnt/etc/xdg/reflector/
 
 #------------------------------------------------------------------------------
 # Disable Wayland
 #------------------------------------------------------------------------------
 #Disable Wayland
-sed -i '5s/.//' /etc/gdm/custom.conf
+sed -i '5s/.//' /mnt/etc/gdm/custom.conf
 
 #------------------------------------------------------------------------------
 # Set Swappiness to 1
 #------------------------------------------------------------------------------
 #Create new file with swappiness configuration
-echo "vm.swappiness=1" >> /etc/sysctl.d/10-swappiness.conf
+echo "vm.swappiness=1" >> /mnt/etc/sysctl.d/10-swappiness.conf
 
 #------------------------------------------------------------------------------
 # Set Journal size limit
 #------------------------------------------------------------------------------
 #Create new file with Journal size limit
-mkdir /etc/systemd/journald.conf.d
-echo "[Journal]" >> /etc/systemd/journald.conf.d/00-journal-size.conf
-echo "SystemMaxUse=50M" >> /etc/systemd/journald.conf.d/00-journal-size.conf
+mkdir /mnt/etc/systemd/journald.conf.d
+echo "[Journal]" >> /mnt/etc/systemd/journald.conf.d/00-journal-size.conf
+echo "SystemMaxUse=50M" >> /mnt/etc/systemd/journald.conf.d/00-journal-size.conf
 
 #------------------------------------------------------------------------------
 # Blacklist Nvidia USB-C and Watchdog modules
 #------------------------------------------------------------------------------
 #Blacklist Nvidia USB-C and Watchdog modules
-cp /root/Arch_Automation/Files/blacklist.conf /etc/modprobe.d/
+cp /root/Arch_Automation/Files/blacklist.conf /mnt/etc/modprobe.d/
 
 #------------------------------------------------------------------------------
 # Apply fix for Nvidia Unmount oldroot error 
 #------------------------------------------------------------------------------
 #Apply fix for Nvidia Unmount oldroot error
-cp /root/Arch_Automation/Files/nvidia.shutdown /usr/lib/systemd/system-shutdown/
+cp /root/Arch_Automation/Files/nvidia.shutdown /mnt/usr/lib/systemd/system-shutdown/
 #Set permissions to file
-chmod +x /usr/lib/systemd/system-shutdown/nvidia.shutdown
+chmod +x /mnt/usr/lib/systemd/system-shutdown/nvidia.shutdown
 
 #------------------------------------------------------------------------------
 # Configure/Create Users
 #------------------------------------------------------------------------------
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
 #Set the root password
 echo root:5927 | chpasswd
 #Create non-root user
 useradd -m -G wheel djorous
 #Set the password
 echo djorous:5927 | chpasswd
+EOF
 
 #------------------------------------------------------------------------------
 # Add User to Sudo
 #------------------------------------------------------------------------------
 #Set user to sudoers
-echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/djorous
+echo "djorous ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers.d/djorous
 
 #------------------------------------------------------------------------------
 # Enable Services
 #------------------------------------------------------------------------------
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
 #Start services
 systemctl enable acpid
 systemctl enable bluetooth
@@ -255,9 +274,13 @@ systemctl enable NetworkManager
 systemctl enable paccache.timer
 systemctl enable reflector.timer
 systemctl enable sshd
+EOF
 
 #------------------------------------------------------------------------------
 # Late Installs to avoid issues
 #------------------------------------------------------------------------------
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
 #Install packagekit
 pacman -S gnome-software-packagekit-plugin
+EOF
