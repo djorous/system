@@ -1,14 +1,19 @@
 #!/bin/bash
 #------------------------------------------------------------------------------
+# Set Parameters
+#------------------------------------------------------------------------------
+diskname=sda
+
+#------------------------------------------------------------------------------
 # Clear disk
 #------------------------------------------------------------------------------
 #zap disk
-sgdisk --zap-all /dev/sda
+sgdisk --zap-all /dev/$diskname
 
 #------------------------------------------------------------------------------
 # Disk Partitioning
 #------------------------------------------------------------------------------
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sda
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/$diskname
   g # clear the in memory partition table
   n # new partition
   1 # partition number 1
@@ -40,28 +45,32 @@ EOF
 # Format Disks
 #------------------------------------------------------------------------------
 #Create a vfat partition in /dev/sda
-mkfs.vfat /dev/sda1
+mkfs.vfat /dev/"${diskname}1"
 #Create a swap partition in /dev/sda2
-mkswap /dev/sda2
+mkswap /dev/"${diskname}2"
 #Create a btrfs partition in /dev/sda3
-mkfs.btrfs -f /dev/sda3
+mkfs.btrfs -f /dev/"${diskname}3"
 #Create a btrfs partition in /dev/sda4
-mkfs.btrfs -f /dev/sda4
+mkfs.btrfs -f /dev/"${diskname}4"
 
 #------------------------------------------------------------------------------
 # Mount / and create subvolumes
 #------------------------------------------------------------------------------
-#Create subvolume for /
+#Mount partitions
 mount /dev/sda3 /mnt
+#Create subvolume for /
 cd /mnt
 btrfs subvolume create @
+#Umount
 cd /root
 umount /mnt
 
-#Create subvolume for /home
+#Mount partitions
 mount /dev/sda4 /mnt
+#Create subvolume for /home
 cd /mnt
 btrfs subvolume create @home
+#Umount
 cd /root
 umount /mnt
 
