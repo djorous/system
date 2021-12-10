@@ -2,6 +2,8 @@
 #------------------------------------------------------------------------------
 # Set Parameters
 #------------------------------------------------------------------------------
+#Keyboard layout
+keyboard=uk
 #Name from /dev
 diskname=sda
 #Size in MB
@@ -10,6 +12,19 @@ efisize=512
 swapsize=4
 #Size in GB
 rootsize=40
+#Reflector countries
+countries='Ireland,United Kingdom,'
+#Timezone
+timezone=Europe/Dublin
+#Package List
+packagelist=base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
+
+#------------------------------------------------------------------------------
+# Set Keyboard
+#------------------------------------------------------------------------------
+#Load configuration for keyboard region
+loadkeys=$keyboard
+
 #------------------------------------------------------------------------------
 # Clear disk
 #------------------------------------------------------------------------------
@@ -24,15 +39,15 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/$diskname
   n # new partition
   1 # partition number 1
     # default - start at beginning of disk 
-  "+${efisize}M" # 100 MB boot parttion
+  +${efisize}M # boot parttion size
   n # new partition
   2 # partion number 2
     # default, start immediately after preceding partition
-  +4G # swap partition
+  +${swapsize}G # swap partition
   n # new partition
   3 # partion number 3
     # default, start immediately after preceding partition
-  +40G # / partition
+  +${rootsize}G  # / partition
   n # new partition
   4 # partion number 4
     # default, start immediately after preceding partition
@@ -50,13 +65,13 @@ EOF
 #------------------------------------------------------------------------------
 # Format Disks
 #------------------------------------------------------------------------------
-#Create a vfat partition in first partition
+#Create a vfat partition in /dev/sda
 mkfs.vfat /dev/"${diskname}1"
-#Create a swap partition in second partition
+#Create a swap partition in /dev/sda2
 mkswap /dev/"${diskname}2"
-#Create a btrfs partition in third partition
+#Create a btrfs partition in /dev/sda3
 mkfs.btrfs -f /dev/"${diskname}3"
-#Create a btrfs partition in fourth partition
+#Create a btrfs partition in /dev/sda4
 mkfs.btrfs -f /dev/"${diskname}4"
 
 #------------------------------------------------------------------------------
@@ -101,13 +116,13 @@ swapon /dev/"${diskname}2"
 # Update Mirrorlist
 #------------------------------------------------------------------------------
 #Run reflector
-reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country 'Ireland,United Kingdom,' --latest 10 --sort rate --age 12
+reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country "$countries" --latest 10 --sort rate --age 12
 
 #------------------------------------------------------------------------------
 # Install Packages
 #------------------------------------------------------------------------------
 #Use the pacstrap(8) script to install the base package, Linux kernel and firmware for common hardware
-pacstrap -C /root/Arch_Automation/Files/pacman.conf /mnt base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager
+pacstrap -C /root/Arch_Automation/Files/pacman.conf /mnt $packagelist
 
 #------------------------------------------------------------------------------
 # Move Installer
@@ -131,7 +146,7 @@ timedatectl set-ntp true
 #Run hwclock(8) to generate /etc/adjtime
 hwclock --systohc
 #Set the time zone
-ln -sf /usr/share/zoneinfo/Europe/Dublin /etc/localtime
+ln -sf /usr/share/zoneinfo/$timezone /etc/localtime
 EOF
 
 #------------------------------------------------------------------------------
