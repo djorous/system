@@ -137,13 +137,13 @@ reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country "$co
 # Install Packages
 #------------------------------------------------------------------------------
 #Use the pacstrap(8) script to install the base package, Linux kernel and firmware for common hardware
-pacstrap -C /root/Arch_Automation/Files/pacman.conf /mnt $packages
+pacstrap -C /root/system/Files/pacman.conf /mnt $packages
 
 #------------------------------------------------------------------------------
 # Move Installer
 #------------------------------------------------------------------------------
 #Copy Git Automation to new mounted point
-cp -r /root/Arch_Automation /mnt/root/Arch_Automation
+cp -r /root/system /mnt/root/system
 
 #------------------------------------------------------------------------------
 # Prepare Partition and Chroot Into new partition
@@ -205,7 +205,7 @@ echo "export EDITOR="$editor >> /mnt/etc/environment
 #Backup Original File
 mv /mnt/etc/default/grub /mnt/etc/default/grub_original
 #Change grub file
-cp /root/Arch_Automation/Files/grub /mnt/etc/default/
+cp /root/system/Files/grub /mnt/etc/default/
 
 #Chroot into installation
 arch-chroot /mnt /bin/bash <<EOF
@@ -221,7 +221,7 @@ EOF
 #Backup Original File
 mv /mnt/etc/mkinitcpio.conf /mnt/etc/mkinitcpio.conf_original
 #Change mkinitcpio.conf file
-cp /root/Arch_Automation/Files/mkinitcpio.conf /mnt/etc/
+cp /root/system/Files/mkinitcpio.conf /mnt/etc/
 #Run mkinitcpio
 arch-chroot /mnt /bin/bash <<EOF
 mkinitcpio -P
@@ -233,7 +233,7 @@ EOF
 #Backup Original File
 mv /mnt/etc/pacman.conf /mnt/etc/pacman.conf_original
 #Change pacman.conf file
-cp /root/Arch_Automation/Files/pacman.conf /mnt/etc/
+cp /root/system/Files/pacman.conf /mnt/etc/
 
 #------------------------------------------------------------------------------
 # Update Mirrorlist
@@ -241,7 +241,7 @@ cp /root/Arch_Automation/Files/pacman.conf /mnt/etc/
 #Backup Original File
 mv /mnt/etc/xdg/reflector/reflector.conf /mnt/etc/xdg/reflector/reflector.conf_original
 #Copy new version over
-cp /root/Arch_Automation/Files/reflector.conf /mnt/etc/xdg/reflector/
+cp /root/system/Files/reflector.conf /mnt/etc/xdg/reflector/
 #Chroot into installation
 arch-chroot /mnt /bin/bash <<EOF
 #Run Reflector
@@ -274,13 +274,13 @@ echo "SystemMaxUse="$journalsize >> /mnt/etc/systemd/journald.conf.d/00-journal-
 # Blacklist Nvidia USB-C and Watchdog modules
 #------------------------------------------------------------------------------
 #Blacklist Nvidia USB-C and Watchdog modules
-cp /root/Arch_Automation/Files/blacklist.conf /mnt/etc/modprobe.d/
+cp /root/system/Files/blacklist.conf /mnt/etc/modprobe.d/
 
 #------------------------------------------------------------------------------
 # Apply fix for Nvidia Unmount oldroot error 
 #------------------------------------------------------------------------------
 #Apply fix for Nvidia Unmount oldroot error
-cp /root/Arch_Automation/Files/nvidia.shutdown /mnt/usr/lib/systemd/system-shutdown/
+cp /root/system/Files/nvidia.shutdown /mnt/usr/lib/systemd/system-shutdown/
 #Set permissions to file
 chmod +x /mnt/usr/lib/systemd/system-shutdown/nvidia.shutdown
 
@@ -359,14 +359,14 @@ cd /mnt/usr/share/applications
 rm avahi-discover.desktop bssh.desktop bvnc.desktop cmake-gui.desktop lstopo.desktop qv4l2.desktop qvidcap.desktop
 
 #Delete install folders
-rm -rf /mnt/root/Arch_Automation
+rm -rf /mnt/root/system
 rm -rf /mnt/home/${username}/paru-bin
 
 #------------------------------------------------------------------------------
 # Late Installs to avoid issues
 #------------------------------------------------------------------------------
 #Install packagekit
-pacstrap -C /root/Arch_Automation/Files/pacman.conf /mnt $latepackages
+pacstrap -C /root/system/Files/pacman.conf /mnt $latepackages
 
 #------------------------------------------------------------------------------
 #Reboot
