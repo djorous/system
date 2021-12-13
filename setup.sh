@@ -2,42 +2,37 @@
 #------------------------------------------------------------------------------
 # Set Parameters
 #------------------------------------------------------------------------------
-#Keyboard layout
+#Keyboard, Locale, Language, Timezone and Mirror Location settings
 keyboard="uk"
-#Disk Name from /dev
-diskname="sda"
-#Size in MB
-efisize="512"
-#Size in GB
-swapsize="4"
-#Size in GB
-rootsize="40"
-#Reflector countries
-countries='Ireland,United Kingdom,'
-#Timezone
-timezone="Europe/Dublin"
-#Package list
-packages="base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager"
-#Set Locale
 locale="en_GB.UTF-8 UTF-8"
-#Set Language
 language="en_GB.UTF-8"
-#Set Hostname
+timezone="Europe/Dublin"
+countries='Ireland,United Kingdom,'
+
+#Disk settings - EFIsize is for boot partition. A home partition will be created with the space left after the Root Partition creation
+diskname="sda"
+efisize="512"
+swapsize="4"
+rootsize="40"
+
+#Users Setup
+rootpass="5927"
+username="djorous"
+userpass="5927"
+
+#Package Setup - Default Gnome DE install 
+packages="base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager"
+latepackages="gnome-software-packagekit-plugin" 
+
+#Network Setup
 hostname="arch"
+
 #Set Default Editor
 editor="nano"
-#Set Swappiness
+
+#System settings
 swappiness="1"
-#Set Journal Size
 journalsize="50M"
-#Set root password
-rootpass="5927"
-#Set new user name
-username="djorous"
-#Set user password
-userpass="5927"
-#Late installed packages
-latepackages="gnome-software-packagekit-plugin" 
 
 #------------------------------------------------------------------------------
 # Set Keyboard
