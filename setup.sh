@@ -367,9 +367,3 @@ rm -rf /mnt/home/${username}/paru-bin
 #------------------------------------------------------------------------------
 #Install packagekit
 pacstrap -C /root/system/files/pacman.conf /mnt $latepackages
-
-#------------------------------------------------------------------------------
-#Reboot
-#------------------------------------------------------------------------------
-#Restart System
-systemctl reboot
