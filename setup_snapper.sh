@@ -13,7 +13,6 @@ countries='Ireland,United Kingdom,'
 diskname="sda"
 efisize="512"
 swapsize="4"
-rootsize="40"
 
 #Users Setup
 rootpass="5927"
@@ -59,11 +58,7 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/$diskname
     # default, start immediately after preceding partition
   +${swapsize}G # swap partition
   n # new partition
-  3 # partion number 3
-    # default, start immediately after preceding partition
-  +${rootsize}G  # / partition
-  n # new partition
-  4 # partion number 4
+  3 # partion number 4
     # default, start immediately after preceding partition
     # default, end at the end
   t # new partition
@@ -79,14 +74,13 @@ EOF
 #------------------------------------------------------------------------------
 # Format Disks
 #------------------------------------------------------------------------------
-#Create a vfat partition in /dev/sda
+#Create a vfat partition in /dev/disk 1
 mkfs.vfat /dev/"${diskname}1"
-#Create a swap partition in /dev/sda2
+#Create a swap partition in /dev/disk 2
 mkswap /dev/"${diskname}2"
-#Create a btrfs partition in /dev/sda3
+#Create a btrfs partition in /dev/disk 3
 mkfs.btrfs -f /dev/"${diskname}3"
-#Create a btrfs partition in /dev/sda4
-mkfs.btrfs -f /dev/"${diskname}4"
+
 
 #------------------------------------------------------------------------------
 # Mount / and create subvolumes
@@ -96,15 +90,13 @@ mount /dev/"${diskname}3" /mnt
 #Create subvolume for /
 cd /mnt
 btrfs subvolume create @
-#Umount
-cd /root
-umount /mnt
-
-#Mount partitions
-mount /dev/"${diskname}4" /mnt
-#Create subvolume for /home
-cd /mnt
+#Create subvolume for home
 btrfs subvolume create @home
+#Create subvolume for snapshots
+btrfs subvolume create @snapshots
+#Create subvolume for var log
+btrfs subvolume create @log
+
 #Umount
 cd /root
 umount /mnt
@@ -114,11 +106,19 @@ mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/"${dis
 btrfs quota enable /mnt
 
 #Create mount point directories
-mkdir /mnt/{boot,home}
+mkdir /mnt/{boot,home,.snapshots,var/log}
 
 #Mount /home subvolume
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskname}4" /mnt/home
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskname}3" /mnt/home
 btrfs quota enable /mnt/home
+
+#Mount /snapshots subvolume
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@snapshots /dev/"${diskname}3" /mnt/.snapshots
+btrfs quota enable /mnt/.snapshots
+
+#Mount /snapshots log
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@log /dev/"${diskname}3" /mnt/var/log
+btrfs quota enable /mnt/var/log
 
 #Mount boot partition
 mount /dev/"${diskname}1" /mnt/boot
