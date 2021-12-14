@@ -21,8 +21,7 @@ username="djorous"
 userpass="5927"
 
 #Package Setup - Default Gnome DE install 
-packages="base linux linux-firmware linux-headers util-linux amd-ucode grub efibootmgr os-prober acpi acpi_call acpid btrfs-progs base-devel networkmanager ntfs-3g reflector nvidia nvidia-settings bash-completion cronie git mlocate nano openssh pacman-contrib bridge-utils dnsmasq edk2-ovmf firewalld iptables-nft logrotate virt-manager eog evince file-roller gdm gnome-backgrounds gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-contacts gnome-control-center gnome-disk-utility gnome-font-viewer gnome-keyring gnome-logs gnome-menus gnome-photos gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-software gnome-system-monitor gnome-terminal gnome-user-docs gnome-user-share gnome-weather gvfs gvfs-afc gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb mutter nautilus sushi xdg-user-dirs-gtk yelp"
-latepackages="gnome-software-packagekit-plugin" 
+packages="base linux linux-firmware linux-headers util-linux amd-ucode grub efibootmgr os-prober acpi acpi_call acpid btrfs-progs base-devel networkmanager ntfs-3g reflector nvidia bash-completion cronie git mlocate logrotate nano openssh pacman-contrib bridge-utils dnsmasq edk2-ovmf firewalld iptables-nft qemu virt-manager eog evince file-roller gdm gnome-backgrounds gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-disk-utility gnome-keyring gnome-logs gnome-menus gnome-photos gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-system-monitor gnome-terminal gnome-user-share gnome-weather gvfs gvfs-afc gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb mutter nautilus sushi xdg-user-dirs-gtk yelp gnome-tweaks gnome-themes-extra papirus-icon-theme firefox"
 
 #Network Setup
 hostname="arch"
@@ -349,12 +348,6 @@ EOF
 rm -rf /mnt/root/system
 #Cleanup install folder
 rm -rf /mnt/home/${username}/paru-bin
-
-#------------------------------------------------------------------------------
-# Late Installs to avoid issues
-#------------------------------------------------------------------------------
-#Install packagekit
-pacstrap -C /root/system/files/pacman.conf /mnt $latepackages
 
 #------------------------------------------------------------------------------
 #Syncronize Locate

@@ -1,4 +1,0 @@
-paru -S --noconfirm timeshift timeshift-autosnap
-
-gnome-shell gnome-terminal gnome-tweak-tool gnome-control-center xdg-user-dirs gdm gnome-keyring 
-
