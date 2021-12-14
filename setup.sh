@@ -21,10 +21,7 @@ username="djorous"
 userpass="5927"
 
 #Package Setup - Default Gnome DE install 
-packages="base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion cronie git mlocate nano networkmanager nvidia nvidia-settings openssh iptables-nft bridge-utils dnsmasq logrotate firewalld pacman-contrib qemu-arch-extra virt-manager gnome-shell gnome-terminal gnome-tweak-tool gnome-control-center xdg-user-dirs gdm gnome-keyring firefox"
-
-
-#Backup for full gnome install packages="base linux linux-firmware linux-headers util-linux grub efibootmgr os-prober amd-ucode acpi acpi_call acpid btrfs-progs base-devel ntfs-3g reflector bash-completion bridge-utils cronie dnsmasq firefox firewalld git gnome gnome-tweaks iptables-nft logrotate mlocate nano networkmanager nvidia nvidia-settings openssh qemu-arch-extra pacman-contrib virt-manager"
+packages="base linux linux-firmware linux-headers util-linux amd-ucode grub efibootmgr os-prober acpi acpi_call acpid btrfs-progs base-devel networkmanager ntfs-3g reflector nvidia nvidia-settings bash-completion cronie git mlocate nano openssh pacman-contrib bridge-utils dnsmasq edk2-ovmf firewalld iptables-nft logrotate virt-manager eog evince file-roller gdm gnome-backgrounds gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-contacts gnome-control-center gnome-disk-utility gnome-font-viewer gnome-keyring gnome-logs gnome-menus gnome-photos gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-software gnome-system-monitor gnome-terminal gnome-user-docs gnome-user-share gnome-weather gvfs gvfs-afc gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb mutter nautilus sushi xdg-user-dirs-gtk yelp"
 latepackages="gnome-software-packagekit-plugin" 
 
 #Network Setup
@@ -327,11 +324,22 @@ systemctl enable sshd
 EOF
 
 #------------------------------------------------------------------------------
-#Syncronize Locate
+# Setup Paru + AUR
 #------------------------------------------------------------------------------
-#Syncronize db
+#Change root into the new system:
 arch-chroot /mnt /bin/bash <<EOF
-updatedb
+#Change user
+sudo -i -u $username
+#Set home directory
+cd /home/$username
+#Clone rep
+git clone https://aur.archlinux.org/paru-bin.git
+#Enter local repository copy
+cd /home/$username/paru-bin
+#Start build
+makepkg --syncdeps --install --needed --noconfirm
+#Install gnome extensions
+paru -S --noconfirm chrome-gnome-shell 
 EOF
 
 #------------------------------------------------------------------------------
@@ -339,9 +347,19 @@ EOF
 #------------------------------------------------------------------------------
 #Delete install folders
 rm -rf /mnt/root/system
+#Cleanup install folder
+rm -rf /mnt/home/${username}/paru-bin
 
 #------------------------------------------------------------------------------
 # Late Installs to avoid issues
 #------------------------------------------------------------------------------
 #Install packagekit
 pacstrap -C /root/system/files/pacman.conf /mnt $latepackages
+
+#------------------------------------------------------------------------------
+#Syncronize Locate
+#------------------------------------------------------------------------------
+#Syncronize db
+arch-chroot /mnt /bin/bash <<EOF
+updatedb
+EOF

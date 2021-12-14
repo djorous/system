@@ -1,21 +1,4 @@
-#------------------------------------------------------------------------------
-# Setup Paru + AUR
-#------------------------------------------------------------------------------
-#Change root into the new system:
-arch-chroot /mnt /bin/bash <<EOF
-#Change user
-sudo -i -u $username
-#Set home directory
-cd /home/$username
-#Clone rep
-git clone https://aur.archlinux.org/paru-bin.git
-#Enter local repository copy
-cd /home/$username/paru-bin
-#Start build
-makepkg --syncdeps --install --needed --noconfirm
-#Install packages
 paru -S --noconfirm timeshift timeshift-autosnap
-#Close
-EOF
 
-rm -rf /mnt/home/${username}/paru-bin
+gnome-shell gnome-terminal gnome-tweak-tool gnome-control-center xdg-user-dirs gdm gnome-keyring 
+
