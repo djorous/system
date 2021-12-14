@@ -354,10 +354,6 @@ EOF
 #------------------------------------------------------------------------------
 # Cleanup
 #------------------------------------------------------------------------------
-#Remove unwanted icons
-cd /mnt/usr/share/applications
-rm avahi-discover.desktop bssh.desktop bvnc.desktop cmake-gui.desktop lstopo.desktop qv4l2.desktop qvidcap.desktop
-
 #Delete install folders
 rm -rf /mnt/root/system
 rm -rf /mnt/home/${username}/paru-bin
