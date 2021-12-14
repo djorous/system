@@ -17,3 +17,5 @@ makepkg --syncdeps --install --needed --noconfirm
 paru -S --noconfirm timeshift timeshift-autosnap
 #Close
 EOF
+
+rm -rf /mnt/home/${username}/paru-bin
