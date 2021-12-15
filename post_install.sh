@@ -1,8 +1,10 @@
 #!/bin/bash
 #------------------------------------------------------------------------------
-# Enable Snapper Services
+# Install snapper packages
 #------------------------------------------------------------------------------ 
- pacman -S --noconfirm snapper snap-pac
+#Install the snapper app plus the snap hooks
+pacman -S --noconfirm snapper snap-pac
+
 #------------------------------------------------------------------------------
 # Configure Snapper
 #------------------------------------------------------------------------------
@@ -28,5 +30,8 @@ chown :wheel /.snapshots
 systemctl enable --now snapper-timeline.timer
 systemctl enable --now snapper-cleanup.timer
 
+#------------------------------------------------------------------------------
+# Install AUR snapper packages
+#------------------------------------------------------------------------------ 
 #Install gnome extensions
-paru -S --noconfirm chrome-gnome-shell 
+paru -S --noconfirm snap-pac-grub snapper-gui
