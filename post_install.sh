@@ -15,3 +15,17 @@ mkdir /.snapshots
 mount -a 
 #Adjust permissions
 chmod 750 /.snapshots
+#Adjust configurations
+mv /etc/snapper/configs/root /etc/snapper/configs/root_original
+mv /etc/snapper/configs/snapper.conf /etc/snapper/configs/snapper.conf
+
+#------------------------------------------------------------------------------
+# Clean up
+#------------------------------------------------------------------------------
+#Delete the system folder
+rm -rf /root/system
+
+#------------------------------------------------------------------------------
+# Restart Machine
+#------------------------------------------------------------------------------
+systemctl reboot

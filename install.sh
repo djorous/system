@@ -275,7 +275,7 @@ chmod +x /mnt/usr/lib/systemd/system-shutdown/nvidia.shutdown
 # Configure Snapper
 #------------------------------------------------------------------------------
 #Move configuration file 
-cp /root/system/files/default /mnt/etc/snapper/configs/default
+cp /root/system/files/snapper.conf /mnt/etc/snapper/configs/snapper.conf
 
 #Create pacman hook
 mkdir /mnt/etc/pacman.d/hooks
