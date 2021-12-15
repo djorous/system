@@ -20,7 +20,7 @@ username="djorous"
 userpass="5927"
 
 #Package Setup - Default Gnome DE install 
-packages="base linux linux-firmware linux-headers util-linux amd-ucode grub efibootmgr os-prober acpi acpi_call acpid btrfs-progs base-devel networkmanager ntfs-3g reflector nvidia bash-completion cronie git mlocate logrotate nano openssh pacman-contrib rsync bridge-utils dnsmasq edk2-ovmf firewalld iptables-nft qemu virt-manager eog evince file-roller gdm gnome-backgrounds gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-disk-utility gnome-keyring gnome-logs gnome-menus gnome-photos gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-system-monitor gnome-terminal gnome-user-share gnome-weather gvfs gvfs-afc gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb mutter nautilus sushi xdg-user-dirs-gtk yelp gnome-tweaks gnome-themes-extra papirus-icon-theme firefox code snapper snap-pac"
+packages="base linux linux-firmware linux-headers util-linux amd-ucode grub efibootmgr os-prober acpi acpi_call acpid btrfs-progs base-devel networkmanager ntfs-3g reflector nvidia bash-completion cronie git mlocate logrotate nano openssh pacman-contrib rsync bridge-utils dnsmasq edk2-ovmf firewalld iptables-nft qemu virt-manager eog evince file-roller gdm gnome-backgrounds gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-disk-utility gnome-keyring gnome-logs gnome-menus gnome-photos gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-system-monitor gnome-terminal gnome-user-share gnome-weather gvfs gvfs-afc gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb mutter nautilus sushi xdg-user-dirs-gtk yelp gnome-tweaks gnome-themes-extra papirus-icon-theme firefox code"
 
 #Network Setup
 hostname="archlinux"
@@ -270,10 +270,6 @@ cp /root/system/files/blacklist.conf /mnt/etc/modprobe.d/
 cp /root/system/files/nvidia.shutdown /mnt/usr/lib/systemd/system-shutdown/
 #Set permissions to file
 chmod +x /mnt/usr/lib/systemd/system-shutdown/nvidia.shutdown
-
-#------------------------------------------------------------------------------
-# Configure Snapper
-#------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 # Configure/Create Users
