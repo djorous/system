@@ -1,4 +1,7 @@
 #!/bin/bash
+#------------------------------------------------------------------------------
+# Enable Snapper Services
+#------------------------------------------------------------------------------ 
  pacman -S --noconfirm snapper snap-pac
 #------------------------------------------------------------------------------
 # Configure Snapper
@@ -24,3 +27,6 @@ chown :wheel /.snapshots
 #------------------------------------------------------------------------------
 systemctl enable --now snapper-timeline.timer
 systemctl enable --now snapper-cleanup.timer
+
+#Install gnome extensions
+paru -S --noconfirm chrome-gnome-shell 
