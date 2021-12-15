@@ -81,7 +81,6 @@ mkswap /dev/"${diskname}2"
 #Create a btrfs partition in /dev/disk 3
 mkfs.btrfs -f /dev/"${diskname}3"
 
-
 #------------------------------------------------------------------------------
 # Mount / and create subvolumes
 #------------------------------------------------------------------------------
@@ -106,7 +105,8 @@ mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/"${dis
 btrfs quota enable /mnt
 
 #Create mount point directories
-mkdir /mnt/{boot,home,.snapshots,var/log}
+mkdir /mnt/{boot,home,.snapshots,var}
+mkdir /mnt/var/log
 
 #Mount /home subvolume
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskname}3" /mnt/home

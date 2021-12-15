@@ -20,7 +20,7 @@ username="djorous"
 userpass="5927"
 
 #Package Setup - Default Gnome DE install 
-packages="base linux linux-firmware linux-headers util-linux amd-ucode grub efibootmgr os-prober"
+packages="base linux linux-firmware linux-headers util-linux amd-ucode grub efibootmgr os-prober snapper snap-pac"
 
 #Network Setup
 hostname="arch"
@@ -149,3 +149,116 @@ cp -r /root/system /mnt/root/system
 #------------------------------------------------------------------------------
 #Generate an fstab file (use -U or -L to define by UUID or labels, respectively):
 genfstab -U /mnt >> /mnt/etc/fstab
+
+#------------------------------------------------------------------------------
+# Clock Setup
+#------------------------------------------------------------------------------
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
+#Use timedatectl(1) to ensure the system clock is accurate
+timedatectl set-ntp true
+#Run hwclock(8) to generate /etc/adjtime
+hwclock --systohc
+#Set the time zone
+ln -sf /usr/share/zoneinfo/"$timezone" /etc/localtime
+EOF
+
+#------------------------------------------------------------------------------
+# Setup Location
+#------------------------------------------------------------------------------
+#Edit /etc/locale.gen and uncomment en_GB.UTF-8 UTF-8 (line 160) and other needed locales
+echo $locale >> /mnt/etc/locale.gen
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
+locale-gen
+EOF
+
+#Create the locale.conf(5) file, and set the LANG variable accordingly
+echo "LANG="$language >> /mnt/etc/locale.conf
+echo "LANGUAGE="$language >> /mnt/etc/locale.conf
+echo "LC_MESSAGES="$language >> /mnt/etc/locale.conf
+echo "LC_ALL="$language >> /mnt/etc/locale.conf
+#Set the console keyboard layout, make the changes persistent in vconsole.conf
+echo "KEYMAP="$keyboard >> /mnt/etc/vconsole.conf
+
+#------------------------------------------------------------------------------
+# Network Configuration
+#------------------------------------------------------------------------------
+#Create the hostname file
+echo $hostname >> /mnt/etc/hostname
+#Setup localhost
+echo "127.0.0.1 localhost" >> /mnt/etc/hosts
+echo "::1       localhost" >> /mnt/etc/hosts
+echo "127.0.1.1 arch.localdomain arch" >> /mnt/etc/hosts
+
+#------------------------------------------------------------------------------
+# Update Export 
+#------------------------------------------------------------------------------
+#Set default editor to nano
+echo "export VISUAL="$editor >> /mnt/etc/environment 
+echo "export EDITOR="$editor >> /mnt/etc/environment
+
+#------------------------------------------------------------------------------
+# Configure Bootloader
+#------------------------------------------------------------------------------
+#Backup Original File
+mv /mnt/etc/default/grub /mnt/etc/default/grub_original
+#Change grub file
+cp /root/system/files/grub /mnt/etc/default/
+
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
+#Install booloader and generate configuration
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+#Generate configuration
+grub-mkconfig -o /boot/grub/grub.cfg
+EOF
+
+#------------------------------------------------------------------------------
+# Configure Initramfs 
+#------------------------------------------------------------------------------
+#Backup Original File
+mv /mnt/etc/mkinitcpio.conf /mnt/etc/mkinitcpio.conf_original
+#Change mkinitcpio.conf file
+cp /root/system/files/mkinitcpio.conf /mnt/etc/
+#Run mkinitcpio
+arch-chroot /mnt /bin/bash <<EOF
+mkinitcpio -P
+EOF
+
+#------------------------------------------------------------------------------
+# Configure Pacman
+#------------------------------------------------------------------------------
+#Backup Original File
+mv /mnt/etc/pacman.conf /mnt/etc/pacman.conf_original
+#Change pacman.conf file
+cp /root/system/files/pacman.conf /mnt/etc/
+
+#------------------------------------------------------------------------------
+# Update Mirrorlist
+#------------------------------------------------------------------------------
+#Backup Original File
+mv /mnt/etc/xdg/reflector/reflector.conf /mnt/etc/xdg/reflector/reflector.conf_original
+#Copy new version over
+cp /root/system/files/reflector.conf /mnt/etc/xdg/reflector/
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
+#Run Reflector
+reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country 'Ireland,United Kingdom,' --latest 10 --sort rate --age 12
+#Sync Packages
+pacman -Syu
+EOF
+
+#------------------------------------------------------------------------------
+# Configure Snapper
+#------------------------------------------------------------------------------
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
+umount /.snapshots
+rm -r /.snapshots
+snapper -c default create-config /
+btrfs subvolume delete /.snapshots
+mkdir /.snapshots
+mount -a 
+chmod 750 /.snapshots
+EOF
