@@ -23,7 +23,7 @@ userpass="5927"
 packages="base linux linux-firmware linux-headers util-linux amd-ucode grub efibootmgr os-prober acpi acpi_call acpid btrfs-progs base-devel networkmanager ntfs-3g reflector nvidia bash-completion cronie git mlocate logrotate nano openssh pacman-contrib rsync bridge-utils dnsmasq edk2-ovmf firewalld iptables-nft qemu virt-manager eog evince file-roller gdm gnome-backgrounds gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-disk-utility gnome-keyring gnome-logs gnome-menus gnome-photos gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-system-monitor gnome-terminal gnome-user-share gnome-weather gvfs gvfs-afc gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb mutter nautilus sushi xdg-user-dirs-gtk yelp gnome-tweaks gnome-themes-extra papirus-icon-theme firefox code snapper snap-pac"
 
 #Network Setup
-hostname="arch"
+hostname="archlinux"
 
 #Set Default Editor
 editor="nano"
@@ -274,11 +274,6 @@ chmod +x /mnt/usr/lib/systemd/system-shutdown/nvidia.shutdown
 #------------------------------------------------------------------------------
 # Configure Snapper
 #------------------------------------------------------------------------------
-#Adjust permissions
-chmod 750 /mnt/.snapshots
-chmod a+rx /mnt/.snapshots
-chown :wheel /mnt/.snapshots
-
 #Move configuration file 
 cp /root/system/files/default /mnt/etc/snapper/configs/default
 
@@ -322,9 +317,9 @@ systemctl enable logrotate.timer
 systemctl enable NetworkManager
 systemctl enable paccache.timer
 systemctl enable reflector.timer
-systemctl enable sshd
 systemctl enable snapper-timeline.timer
 systemctl enable snapper-cleanup.timer
+systemctl enable sshd
 EOF
 
 #------------------------------------------------------------------------------
@@ -342,8 +337,9 @@ git clone https://aur.archlinux.org/paru-bin.git
 cd /home/$username/paru-bin
 #Start build
 makepkg --syncdeps --install --needed --noconfirm
-#Install gnome extensions
-paru -S --noconfirm chrome-gnome-shell snap-pac-grub snapper-gui
+#Install AUR packages
+paru -Sua
+paru -S --noconfirm chrome-gnome-shell snap-pac-grub
 EOF
 
 #------------------------------------------------------------------------------
