@@ -2,6 +2,9 @@
 #------------------------------------------------------------------------------
 # Configure Snapper
 #------------------------------------------------------------------------------
+#Install packages
+pacman --noconfirm -Syu
+pacman --noconfirm -S snapper snap-pac
 #Umount the snapshots folder
 umount /.snapshots
 rm -r /.snapshots
