@@ -282,6 +282,10 @@ chown :wheel /mnt/.snapshots
 #Move configuration file 
 cp /root/system/files/default /mnt/etc/snapper/default
 
+#Create pacman hook
+mkdir /mnt/etc/pacman.d/hooks
+cp /root/system/files/50-bootbackup.hook /mnt/etc/pacman.d/hooks/
+
 #------------------------------------------------------------------------------
 # Configure/Create Users
 #------------------------------------------------------------------------------

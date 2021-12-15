@@ -1,9 +1,3 @@
-#!/bin/bash
-#------------------------------------------------------------------------------
-# Install snapper packages
-#------------------------------------------------------------------------------ 
-#Install the snapper app plus the snap hooks
-pacman -S --noconfirm snapper snap-pac
 
 #------------------------------------------------------------------------------
 # Configure Snapper
@@ -34,4 +28,4 @@ systemctl enable --now snapper-cleanup.timer
 # Install AUR snapper packages
 #------------------------------------------------------------------------------ 
 #Install gnome extensions
-paru -S --noconfirm snap-pac-grub snapper-gui
+paru -S --noconfirm 
