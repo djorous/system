@@ -20,7 +20,7 @@ username="djorous"
 userpass="5927"
 
 #Package Setup - Default Gnome DE install 
-packages="base linux linux-firmware linux-headers util-linux amd-ucode grub efibootmgr os-prober acpi acpi_call acpid btrfs-progs base-devel networkmanager ntfs-3g reflector nvidia bash-completion cronie git mlocate logrotate nano openssh pacman-contrib bridge-utils dnsmasq edk2-ovmf firewalld iptables-nft qemu virt-manager eog evince file-roller gdm gnome-backgrounds gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-disk-utility gnome-keyring gnome-logs gnome-menus gnome-photos gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-system-monitor gnome-terminal gnome-user-share gnome-weather gvfs gvfs-afc gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb mutter nautilus sushi xdg-user-dirs-gtk yelp gnome-tweaks gnome-themes-extra papirus-icon-theme firefox code"
+packages="base linux linux-firmware linux-headers util-linux amd-ucode grub efibootmgr os-prober acpi acpi_call acpid btrfs-progs base-devel networkmanager ntfs-3g reflector nvidia bash-completion cronie git mlocate logrotate nano openssh pacman-contrib bridge-utils dnsmasq edk2-ovmf firewalld iptables-nft qemu virt-manager eog evince file-roller gdm gnome-backgrounds gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-disk-utility gnome-keyring gnome-logs gnome-menus gnome-photos gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-system-monitor gnome-terminal gnome-user-share gnome-weather gvfs gvfs-afc gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb mutter nautilus sushi xdg-user-dirs-gtk yelp gnome-tweaks gnome-themes-extra papirus-icon-theme firefox code snapper snap-pac"
 
 #Network Setup
 hostname="arch"
@@ -102,28 +102,16 @@ umount /mnt
 
 #Remount / subvolume
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/"${diskname}3" /mnt
-btrfs quota enable /mnt
 
 #Create mount point directories
 mkdir /mnt/{boot,home,.snapshots,var}
 mkdir /mnt/var/log
 
-#Mount /home subvolume
+#Mount subvolumes and partitions
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskname}3" /mnt/home
-btrfs quota enable /mnt/home
-
-#Mount /snapshots subvolume
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@snapshots /dev/"${diskname}3" /mnt/.snapshots
-btrfs quota enable /mnt/.snapshots
-
-#Mount /snapshots log
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@log /dev/"${diskname}3" /mnt/var/log
-btrfs quota enable /mnt/var/log
-
-#Mount boot partition
 mount /dev/"${diskname}1" /mnt/boot
-
-#Mount swap partition
 swapon /dev/"${diskname}2"
 
 #------------------------------------------------------------------------------
@@ -284,6 +272,17 @@ cp /root/system/files/nvidia.shutdown /mnt/usr/lib/systemd/system-shutdown/
 chmod +x /mnt/usr/lib/systemd/system-shutdown/nvidia.shutdown
 
 #------------------------------------------------------------------------------
+# Configure Snapper
+#------------------------------------------------------------------------------
+#Adjust permissions
+chmod 750 /mnt/.snapshots
+chmod a+rx /mnt/.snapshots
+chown :wheel /mnt/.snapshots
+
+#Move configuration file 
+cp /root/system/files/default /mnt/etc/snapper/default
+
+#------------------------------------------------------------------------------
 # Configure/Create Users
 #------------------------------------------------------------------------------
 #Chroot into installation
@@ -320,6 +319,8 @@ systemctl enable NetworkManager
 systemctl enable paccache.timer
 systemctl enable reflector.timer
 systemctl enable sshd
+systemctl enable snapper-timeline.timer
+systemctl enable snapper-cleanup.timer
 EOF
 
 #------------------------------------------------------------------------------
@@ -338,7 +339,7 @@ cd /home/$username/paru-bin
 #Start build
 makepkg --syncdeps --install --needed --noconfirm
 #Install gnome extensions
-paru -S --noconfirm chrome-gnome-shell 
+paru -S --noconfirm chrome-gnome-shell snap-pac-grub snapper-gui
 EOF
 
 #------------------------------------------------------------------------------
