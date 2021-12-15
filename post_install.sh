@@ -17,7 +17,10 @@ mount -a
 chmod 750 /.snapshots
 #Adjust configurations
 mv /etc/snapper/configs/root /etc/snapper/configs/root_original
-mv /etc/snapper/configs/snapper.conf /etc/snapper/configs/snapper.conf
+#Move configuration file
+cp /root/system/files/snapper.conf /etc/snapper/configs/snapper.conf
+#Rename
+mv /etc/snapper/configs/snapper.conf /etc/snapper/configs/root
 
 #------------------------------------------------------------------------------
 # Clean up
