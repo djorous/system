@@ -299,12 +299,6 @@ useradd -m -G wheel $username
 #Set the password
 echo $username":"$userpass | chpasswd
 EOF
-#Move user files
-cp /root/system/files/.git-credentials /mnt/home/$username
-cp /root/system/files/.gitconfig /mnt/home/$username
-#Change ownership
-chown $username /mnt/home/${username}/.git-credentials
-chown $username /mnt/home/${username}/.gitconfig 
 
 #------------------------------------------------------------------------------
 # Add User to Sudo
