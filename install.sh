@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------
 # Set Parameters
 #------------------------------------------------------------------------------
-#Keyboard, Locale, Language, Timezone and Mirror Location settings
+#Keyboard, Locale, Language, Timezone and Mirror Location settings 
 keyboard="uk"
 locale="en_GB.UTF-8 UTF-8"
 language="en_GB.UTF-8"
