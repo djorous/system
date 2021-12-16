@@ -365,3 +365,9 @@ rm -rf /mnt/home/${username}/paru-bin
 arch-chroot /mnt /bin/bash <<EOF
 updatedb
 EOF
+
+#------------------------------------------------------------------------------
+#Reboot
+#------------------------------------------------------------------------------
+#Restart system
+systemctl reboot

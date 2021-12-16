@@ -28,9 +28,9 @@ mv /etc/snapper/configs/snapper.conf /etc/snapper/configs/root
 #------------------------------------------------------------------------------
 # Enable Services
 #------------------------------------------------------------------------------
-systemctl enable snapper-timeline.timer
-systemctl enable snapper-boot.timer
-systemctl enable snapper-cleanup.timer
+systemctl enable --now snapper-timeline.timer
+systemctl enable --now snapper-boot.timer
+systemctl enable --now snapper-cleanup.timer
 
 #------------------------------------------------------------------------------
 # Configure UpdateDB for Snaps
@@ -41,14 +41,3 @@ mv /etc/updatedb.conf /etc/updatedb.conf_original
 cp /root/system/files/updatedb.conf /etc/updatedb.conf
 #Refresh db
 updatedb
-
-#------------------------------------------------------------------------------
-# Clean up
-#------------------------------------------------------------------------------
-#Delete the system folder
-rm -rf /root/system
-
-#------------------------------------------------------------------------------
-# Restart Machine
-#------------------------------------------------------------------------------
-systemctl reboot
