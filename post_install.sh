@@ -38,6 +38,8 @@ systemctl enable snapper-cleanup.timer
 mv /etc/updatedb.conf /etc/updatedb.conf_original
 #Adjust configurations
 cp /root/system/files/updatedb.conf /etc/updatedb.conf
+#Refresh db
+updatedb
 
 #------------------------------------------------------------------------------
 # Clean up
