@@ -313,6 +313,7 @@ echo $username" ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers.d/$username
 arch-chroot /mnt /bin/bash <<EOF
 #Start services
 systemctl enable acpid
+systemctl enable avahi-daemon
 systemctl enable bluetooth
 systemctl enable cronie
 systemctl enable firewalld
