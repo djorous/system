@@ -29,6 +29,7 @@ mv /etc/snapper/configs/snapper.conf /etc/snapper/configs/root
 # Enable Services
 #------------------------------------------------------------------------------
 systemctl enable snapper-timeline.timer
+systemctl enable snapper-boot.timer
 systemctl enable snapper-cleanup.timer
 
 #------------------------------------------------------------------------------
