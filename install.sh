@@ -12,8 +12,8 @@ countries='Ireland,United Kingdom,'
 #Disk settings - EFIsize is for boot partition. A home partition will be created with the space left after the Root Partition creation
 diskname="sda"
 efisize="512"
-swapsize="4"
-rootsize="45"
+swapsize="8"
+rootsize="250"
 
 #Users Setup
 rootpass="5927"
@@ -53,15 +53,15 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/$diskname
   n # new partition
   1 # partition number 1
     # default - start at beginning of disk 
-  +${efisize}M # boot parttion size
+  +${efisize}MB # boot parttion size
   n # new partition
   2 # partion number 2
     # default, start immediately after preceding partition
-  +${swapsize}G # swap partition
+  +${swapsize}GB # swap partition
   n # new partition
   3 # partion number 3
     # default, start immediately after preceding partition
-  +${rootsize}G # swap partition
+  +${rootsize}GB # swap partition
   n # new partition
   4 # partion number 4
     # default, start immediately after preceding partition
