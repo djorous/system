@@ -10,7 +10,7 @@ timezone="Europe/Dublin"
 countries='Ireland,United Kingdom,'
 
 #Disk settings - EFIsize is for boot partition. A home partition will be created with the space left after the Root Partition creation
-diskname="sda"
+diskname="nvme0n1"
 efisize="512"
 swapsize="8"
 rootsize="250"
@@ -80,19 +80,19 @@ EOF
 # Format Disks
 #------------------------------------------------------------------------------
 #Create a vfat partition in /dev/disk 1
-mkfs.vfat /dev/"${diskname}1"
+mkfs.vfat /dev/"${diskname}p1"
 #Create a swap partition in /dev/disk 2
-mkswap /dev/"${diskname}2"
+mkswap /dev/"${diskname}p2"
 #Create a btrfs partition in /dev/disk 3
-mkfs.btrfs -f /dev/"${diskname}3"
+mkfs.btrfs -f /dev/"${diskname}p3"
 #Create a btrfs partition in /dev/disk 4
-mkfs.btrfs -f /dev/"${diskname}4"
+mkfs.btrfs -f /dev/"${diskname}p4"
 
 #------------------------------------------------------------------------------
 # Mount / and create subvolumes
 #------------------------------------------------------------------------------
 #Mount partitions
-mount /dev/"${diskname}3" /mnt
+mount /dev/"${diskname}p3" /mnt
 #Create subvolume for /
 cd /mnt
 btrfs subvolume create @
@@ -106,7 +106,7 @@ cd /root
 umount /mnt
 
 #Mount partitions
-mount /dev/"${diskname}4" /mnt
+mount /dev/"${diskname}p4" /mnt
 #Create subvolume for /
 cd /mnt
 btrfs subvolume create @home
@@ -116,18 +116,18 @@ cd /root
 umount /mnt
 
 #Remount / subvolume
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/"${diskname}3" /mnt
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/"${diskname}p3" /mnt
 
 #Create mount point directories
 mkdir /mnt/{boot,home,.snapshots,var}
 mkdir /mnt/var/log
 
 #Mount subvolumes and partitions
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskname}4" /mnt/home
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@snapshots /dev/"${diskname}3" /mnt/.snapshots
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@log /dev/"${diskname}3" /mnt/var/log
-mount /dev/"${diskname}1" /mnt/boot
-swapon /dev/"${diskname}2"
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskname}p4" /mnt/home
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@snapshots /dev/"${diskname}p3" /mnt/.snapshots
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@log /dev/"${diskname}p3" /mnt/var/log
+mount /dev/"${diskname}p1" /mnt/boot
+swapon /dev/"${diskname}p2"
 
 #------------------------------------------------------------------------------
 # Update Mirrorlist
