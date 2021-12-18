@@ -319,6 +319,7 @@ systemctl enable cronie
 systemctl enable firewalld
 systemctl enable fstrim.timer
 systemctl enable gdm
+systemctl enable grub-btrfs.path
 systemctl enable libvirtd
 systemctl enable logrotate.timer
 systemctl enable NetworkManager
