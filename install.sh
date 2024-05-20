@@ -21,7 +21,7 @@ username="djorous"
 userpass="5927"
 
 #Package Setup - Default Gnome DE install 
-packages="base linux linux-firmware linux-headers util-linux amd-ucode base-devel pacman-contrib btrfs-progs networkmanager reflector mlocate openssh bash-completion cronie logrotate nano"
+packages="base linux linux-firmware linux-headers util-linux amd-ucode base-devel pacman-contrib btrfs-progs networkmanager reflector mlocate openssh bash-completion cronie logrotate nano git"
 
 #Network Setup
 hostname="battlestation"
