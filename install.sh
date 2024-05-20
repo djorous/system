@@ -14,7 +14,6 @@ diskname="nvme0n1"
 diskpartname="nvme0n1p"
 efisize="512"
 swapsize="8"
-rootsize="250"
 
 #Users Setup
 rootpass="5927"
@@ -22,10 +21,10 @@ username="djorous"
 userpass="5927"
 
 #Package Setup - Default Gnome DE install 
-packages="base linux linux-firmware linux-headers util-linux amd-ucode grub grub-btrfs grub-theme-vimix efibootmgr os-prober acpi acpi_call acpid btrfs-progs base-devel networkmanager ntfs-3g reflector nvidia bash-completion cronie git mlocate logrotate nano openssh pacman-contrib bridge-utils dnsmasq edk2-ovmf firewalld iptables-nft qemu virt-manager dmidecode eog evince file-roller gdm gedit gnome-backgrounds gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-disk-utility gnome-keyring gnome-logs gnome-menus gnome-photos gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-system-monitor gnome-terminal gnome-user-share gnome-weather gvfs gvfs-afc gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb mutter nautilus sushi xdg-user-dirs-gtk yelp gnome-tweaks gnome-themes-extra papirus-icon-theme firefox code"
+packages="base linux linux-firmware linux-headers util-linux amd-ucode base-devel pacman-contrib btrfs-progs networkmanager reflector mlocate openssh bash-completion cronie logrotate nano"
 
 #Network Setup
-hostname="archlinux"
+hostname="battlestation"
 
 #Set Default Editor
 editor="nano"
@@ -58,21 +57,11 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/$diskname
   n # new partition
   2 # partion number 2
     # default, start immediately after preceding partition
-  +${swapsize}GB # swap partition
-  n # new partition
-  3 # partion number 3
-    # default, start immediately after preceding partition
-  +${rootsize}GB # swap partition
-  n # new partition
-  4 # partion number 4
-    # default, start immediately after preceding partition
     # default, end at the end
   t # new partition
   1 # partion number 1
   uefi  # default, start immediately after preceding partition
   t # new partition
-  2 # partion number 2
-  swap  # default, start immediately after preceding partition  
   p # print the in-memory partition table
   w # write
 EOF
@@ -82,18 +71,14 @@ EOF
 #------------------------------------------------------------------------------
 #Create a vfat partition in /dev/disk 1
 mkfs.vfat /dev/"${diskpartname}1"
-#Create a swap partition in /dev/disk 2
-mkswap /dev/"${diskpartname}2"
-#Create a btrfs partition in /dev/disk 3
-mkfs.btrfs -f /dev/"${diskpartname}3"
-#Create a btrfs partition in /dev/disk 4
-mkfs.btrfs -f /dev/"${diskpartname}4"
+#Create a btrfs partition in /dev/disk 2
+mkfs.btrfs -f /dev/"${diskpartname}2"
 
 #------------------------------------------------------------------------------
 # Mount / and create subvolumes
 #------------------------------------------------------------------------------
 #Mount partitions
-mount /dev/"${diskpartname}3" /mnt
+mount /dev/"${diskpartname}2" /mnt
 #Create subvolume for /
 cd /mnt
 btrfs subvolume create @
@@ -101,15 +86,7 @@ btrfs subvolume create @
 btrfs subvolume create @snapshots
 #Create subvolume for var log
 btrfs subvolume create @log
-
-#Umount
-cd /root
-umount /mnt
-
-#Mount partitions
-mount /dev/"${diskpartname}4" /mnt
-#Create subvolume for /
-cd /mnt
+#Create subvolume for home
 btrfs subvolume create @home
 
 #Umount
@@ -117,18 +94,17 @@ cd /root
 umount /mnt
 
 #Remount / subvolume
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/"${diskpartname}3" /mnt
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/"${diskpartname}2" /mnt
 
 #Create mount point directories
 mkdir /mnt/{boot,home,.snapshots,var}
 mkdir /mnt/var/log
 
 #Mount subvolumes and partitions
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskpartname}4" /mnt/home
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@snapshots /dev/"${diskpartname}3" /mnt/.snapshots
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@log /dev/"${diskpartname}3" /mnt/var/log
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskpartname}2" /mnt/home
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@snapshots /dev/"${diskpartname}2" /mnt/.snapshots
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@log /dev/"${diskpartname}2" /mnt/var/log
 mount /dev/"${diskpartname}1" /mnt/boot
-swapon /dev/"${diskpartname}2"
 
 #------------------------------------------------------------------------------
 # Update Mirrorlist
@@ -153,6 +129,16 @@ cp -r /root/system /mnt/root/system
 #------------------------------------------------------------------------------
 #Generate an fstab file (use -U or -L to define by UUID or labels, respectively):
 genfstab -U /mnt >> /mnt/etc/fstab
+
+#------------------------------------------------------------------------------
+# Create Swapfile
+#------------------------------------------------------------------------------
+#Create swap file
+mkswap -U clear --size "${swapsize}G" --file /mnt/swapfile
+#Activate Swap file
+swapon /swapfile
+#Add entry to Fstab
+echo "/swapfile none swap defaults 0 0" >> /mnt/etc/fstab
 
 #------------------------------------------------------------------------------
 # Clock Setup
@@ -203,22 +189,6 @@ echo "export VISUAL="$editor >> /mnt/etc/environment
 echo "export EDITOR="$editor >> /mnt/etc/environment
 
 #------------------------------------------------------------------------------
-# Configure Bootloader
-#------------------------------------------------------------------------------
-#Backup Original File
-mv /mnt/etc/default/grub /mnt/etc/default/grub_original
-#Change grub file
-cp /root/system/files/grub /mnt/etc/default/
-
-#Chroot into installation
-arch-chroot /mnt /bin/bash <<EOF
-#Install booloader and generate configuration
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-#Generate configuration
-grub-mkconfig -o /boot/grub/grub.cfg
-EOF
-
-#------------------------------------------------------------------------------
 # Configure Initramfs 
 #------------------------------------------------------------------------------
 #Backup Original File
@@ -254,10 +224,10 @@ pacman -Syu
 EOF
 
 #------------------------------------------------------------------------------
-# Disable Wayland
+# Configure Bootloader
 #------------------------------------------------------------------------------
-#Disable Wayland
-sed -i '5s/.//' /mnt/etc/gdm/custom.conf
+#Configure systemd-boot
+bootctl install
 
 #------------------------------------------------------------------------------
 # Set Swappiness to 1
@@ -272,12 +242,6 @@ echo "vm.swappiness="$swappiness >> /mnt/etc/sysctl.d/10-swappiness.conf
 mkdir /mnt/etc/systemd/journald.conf.d
 echo "[Journal]" >> /mnt/etc/systemd/journald.conf.d/00-journal-size.conf
 echo "SystemMaxUse="$journalsize >> /mnt/etc/systemd/journald.conf.d/00-journal-size.conf
-
-#------------------------------------------------------------------------------
-# Blacklist Nvidia USB-C and Watchdog modules
-#------------------------------------------------------------------------------
-#Blacklist Nvidia USB-C and Watchdog modules
-cp /root/system/files/blacklist.conf /mnt/etc/modprobe.d/
 
 #------------------------------------------------------------------------------
 # Apply fix for Nvidia Unmount oldroot error 
@@ -313,15 +277,8 @@ echo $username" ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers.d/$username
 #Chroot into installation
 arch-chroot /mnt /bin/bash <<EOF
 #Start services
-systemctl enable acpid
-systemctl enable avahi-daemon
-systemctl enable bluetooth
 systemctl enable cronie
-systemctl enable firewalld
 systemctl enable fstrim.timer
-systemctl enable gdm
-systemctl enable grub-btrfs.path
-systemctl enable libvirtd
 systemctl enable logrotate.timer
 systemctl enable NetworkManager
 systemctl enable paccache.timer
@@ -346,7 +303,6 @@ cd /home/$username/paru-bin
 makepkg --syncdeps --install --needed --noconfirm
 #Install AUR packages
 paru -Sua
-paru -S --noconfirm google-chrome chrome-gnome-shell
 EOF
 
 #------------------------------------------------------------------------------
@@ -367,4 +323,4 @@ EOF
 #Reboot
 #------------------------------------------------------------------------------
 #Restart system
-systemctl reboot
+#systemctl reboot
