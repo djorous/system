@@ -226,8 +226,11 @@ EOF
 #------------------------------------------------------------------------------
 # Configure Bootloader
 #------------------------------------------------------------------------------
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
 #Configure systemd-boot
 bootctl install
+EOF
 
 #------------------------------------------------------------------------------
 # Set Swappiness to 1
