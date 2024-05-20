@@ -125,6 +125,15 @@ pacstrap -C /root/system/files/pacman.conf /mnt $packages
 cp -r /root/system /mnt/root/system
 
 #------------------------------------------------------------------------------
+# Configure Bootloader
+#------------------------------------------------------------------------------
+#Chroot into installation
+arch-chroot /mnt /bin/bash <<EOF
+#Configure systemd-boot
+bootctl install
+EOF
+
+#------------------------------------------------------------------------------
 # Prepare Partition and Chroot Into new partition
 #------------------------------------------------------------------------------
 #Generate an fstab file (use -U or -L to define by UUID or labels, respectively):
@@ -218,18 +227,9 @@ cp /root/system/files/reflector.conf /mnt/etc/xdg/reflector/
 #Chroot into installation
 arch-chroot /mnt /bin/bash <<EOF
 #Run Reflector
-reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country 'Ireland,United Kingdom,' --latest 10 --sort rate --age 12
+reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country "$countries" --latest 10 --sort rate --age 12
 #Sync Packages
 pacman -Syu
-EOF
-
-#------------------------------------------------------------------------------
-# Configure Bootloader
-#------------------------------------------------------------------------------
-#Chroot into installation
-arch-chroot /mnt /bin/bash <<EOF
-#Configure systemd-boot
-bootctl install
 EOF
 
 #------------------------------------------------------------------------------
