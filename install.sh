@@ -10,8 +10,8 @@ timezone="Europe/Dublin"
 countries='Ireland,United Kingdom,'
 
 #Disk settings - EFIsize is for boot partition. A home partition will be created with the space left after the Root Partition creation
-diskname="nvme0n1"
-diskpartname="nvme0n1p"
+diskname="nvme1n1"
+diskpartname="nvme1n1p"
 efisize="512"
 swapsize="8"
 
@@ -81,13 +81,21 @@ mkfs.btrfs -f /dev/"${diskpartname}2"
 mount /dev/"${diskpartname}2" /mnt
 #Create subvolume for /
 cd /mnt
+
+#Create root
 btrfs subvolume create @
-#Create subvolume for snapshots
-btrfs subvolume create @snapshots
-#Create subvolume for var log
-btrfs subvolume create @log
+
 #Create subvolume for home
 btrfs subvolume create @home
+
+#Create subvolume for log
+btrfs subvolume create @log
+
+#Create subvolume for pkg
+btrfs subvolume create @pkg
+
+#Create subvolume for snapshots
+btrfs subvolume create @.snapshots
 
 #Umount
 cd /root
@@ -99,11 +107,15 @@ mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/"${dis
 #Create mount point directories
 mkdir /mnt/{boot,home,.snapshots,var}
 mkdir /mnt/var/log
+mkdir /mnt/var/cache
+mkdir /mnt/var/cache/pacman
+mkdir /mnt/var/cache/pacman/pkg
 
 #Mount subvolumes and partitions
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/"${diskpartname}2" /mnt/home
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@snapshots /dev/"${diskpartname}2" /mnt/.snapshots
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@log /dev/"${diskpartname}2" /mnt/var/log
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@log /dev/"${diskpartname}2" /mnt/var/cache/pacman/pkg
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@.snapshots /dev/"${diskpartname}2" /mnt/.snapshots
 mount /dev/"${diskpartname}1" /mnt/boot
 
 #------------------------------------------------------------------------------
