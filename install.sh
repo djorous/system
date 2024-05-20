@@ -227,7 +227,7 @@ cp /root/system/files/reflector.conf /mnt/etc/xdg/reflector/
 #Chroot into installation
 arch-chroot /mnt /bin/bash <<EOF
 #Run Reflector
-reflector --save /etc/pacman.d/mirrorlist --protocol 'http,https' --country "$countries" --latest 10 --sort rate --age 12
+reflector
 #Sync Packages
 pacman -Syu
 EOF
