@@ -21,7 +21,7 @@ username="djorous"
 userpass="5927"
 
 #Package Setup - Default Gnome DE install 
-packages="base linux linux-firmware linux-headers util-linux amd-ucode base-devel refind pacman-contrib btrfs-progs networkmanager reflector mlocate openssh bash-completion cronie logrotate nano git"
+packages="base linux linux-firmware linux-headers util-linux amd-ucode base-devel grub efibootmgr pacman-contrib btrfs-progs networkmanager reflector mlocate openssh bash-completion cronie logrotate nano git"
 
 #Network Setup
 hostname="battlestation"
@@ -141,7 +141,7 @@ cp -r /root/system /mnt/root/system
 #Chroot into installation
 arch-chroot /mnt /bin/bash <<EOF
 #Configure systemd-boot
-refind-install
+grub-install --target=x86_64-efi --efi-directory=esp --bootloader-id=GRUB
 EOF
 
 #------------------------------------------------------------------------------
